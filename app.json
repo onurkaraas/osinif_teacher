@@ -2,7 +2,7 @@
   "expo": {
     "name": "oSınıf Öğretmen",
     "slug": "oSinif_teacher",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,14 +11,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#EBF5FB"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "buildNumber": "6",
       "supportsTablet": true,
       "bundleIdentifier": "com.osinif.teacher"
     },
     "android": {
+      "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
@@ -28,9 +28,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-font"
-    ],
+    "plugins": ["expo-font"],
     "extra": {
       "eas": {
         "projectId": "8c1e4c5a-ec09-41a9-8e29-d84be73e8edf"

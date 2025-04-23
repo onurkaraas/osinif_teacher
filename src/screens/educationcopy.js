@@ -1,78 +1,46 @@
+import { BODY2, BODY3, BODY4, H1 } from '../../constants';
+import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 import {
   View,
   Text,
-  ScrollView,
+  Touchable,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Alert,
-  FlatList,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
-import { Image } from 'expo-image';
-import React, { useContext, useEffect, useState } from 'react';
-import { defApiFunc, FILE_URL, REF_FILE_URL } from '../../../api';
-import { AuthContext } from '../../../context/AuthContext';
-import lessonListComp from '../../../components/education/lessonListComp';
-import { BODY3, BODY4, COLORS, FONTS, SIZES } from '../../../constants/theme';
-import { CheckBox, Icon, Input, Switch } from '@rneui/base';
-import Modal from 'react-native-modal';
-import { mainButton } from '../../../components/buttons';
-import notificationSwitch from '../../../components/settings/notificationSwitch';
-import textInput from '../../../components/main/textInput';
-import { FlashList } from '@shopify/flash-list';
-import ImageView from 'react-native-image-viewing';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { useIsFocused } from '@react-navigation/native';
+import { AirbnbRating, Icon } from '@rneui/base';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import lessonListComp from '../../components/education/lessonListComp';
+import unitListComp from '../../components/education/unitListComp';
+import chapterListComp from '../../components/education/chapterListComp';
+import reviewTeacherModal from '../../components/modals/reviewTeacherModal';
+import { API_URL, defApiFunc } from '../../api';
+import { AuthContext } from '../../context/AuthContext';
+import { ResizeMode, Video } from 'expo-av';
+import questionListComp from '../../components/education/questionListComp';
+import mainButton from '../../components/buttons/mainButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { isTablet } from '../../../helpers/deviceInfo';
-import { show } from '../../../../node_modules/cli-cursor/index.d';
-import PickerWithLabel from '../../../components/main/pickerWithLabel';
-
-const CreateTestScreen = ({ navigation }) => {
-  const { token } = useContext(AuthContext);
-  const isFocused = useIsFocused();
-  const { user, userInfo } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
-  const [purchasedLessons, setPurchasedLessons] = useState([]);
+const EducationScreen = ({ navigation }) => {
+  const { token, userInfo } = useContext(AuthContext);
+  const [lessons, setLessons] = useState([]);
+  const [purchasedLessons, setPurchasedLessons] = useState(null);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
-  const [unitList, setUnitList] = useState([]);
+  const [unitList, setUnitList] = useState(null);
+  const [chapterList, setChapterList] = useState(null);
+  const [selectedLesson, setSelectedLesson] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
-  //settingsModal
-  const [isVisible, setIsVisible] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  //modal
+  const [modalVisible, setModalVisible] = useState(false);
 
-  //0 all questions, 2 except old questions
-  const [param, setParam] = useState(false);
-  const [maxQuestion, setMaxQuestion] = useState('10');
-  const [questionList, setQuestionList] = useState([]);
-  const [selectedQuestion, setSelectedQuestion] = useState([]);
-  const [selectedQuestionCodeList, setSelectedQuestionCodeList] = useState([]);
-  //full screen image iew
-  const [images, setImages] = useState([]);
-  const [isImageVisible, setIsImageVisible] = useState(false);
-  const [imageIndex, setImageIndex] = useState(0);
-  //refresh list
-  const [refreshing, setRefreshing] = useState(false);
-  const [selectAll, setSelectAll] = useState(false);
-  //save modal
-  const [saveModalVisible, setSaveModalVisible] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [studentList, setStudentList] = useState([]);
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  const [showStudentModal, setShowStudentModal] = useState(false);
-  // First, add a new loading state for the save operation
-  const [savingTest, setSavingTest] = useState(false);
-  const [selectedSchool, setSelectedSchool] = useState(null);
-  const [selectedClass, setSelectedClass] = useState(null);
+  const [vimeoData, setVimeoData] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     defApiFunc('getMemberPurchased', {
       token: token,
     }).then(response => {
       setPurchasedLessons(response.data);
-      setLoading(false);
-      setSelectedPurchase(null);
-      setSelectedQuestionCodeList([]);
-      setSelectedQuestion([]);
-      setSelectedUnit(null);
       // console.log("getEducationDetail", response, "qwe");
     });
 
@@ -83,78 +51,94 @@ const CreateTestScreen = ({ navigation }) => {
     // }).then((response) => {
     //   console.log("getEducationContents", response);
     // });
-  }, [isFocused]);
-  const [schoolList, setSchoolList] = useState([]);
+  }, []);
+
   useEffect(() => {
     if (selectedPurchase) {
-      setLoading(true);
-      defApiFunc('getProductUnits', {
-        token,
-        productCode: selectedPurchase?.PRODUCTCODE,
-      }).then(
-        res => {
-          setLoading(false);
-
-          setUnitList([
-            {
-              ID: 0,
-              NAME: 'Tüm Üniteler',
-            },
-            ...res.data,
-          ]);
-        },
-        err => {
-          console.log('err', err);
-          Alert.alert('Uyarı', 'Üniteler getirilirken bir hata oluştu.');
-          setLoading(false);
-        },
-      );
+      defApiFunc('getEducationDetail', {
+        token: token,
+        productCode: selectedPurchase?.PRODUCTCODE.toString(),
+      }).then(response => {
+        setLessons(response.data);
+        // console.log("getEducationDetail", response.data);
+      });
     }
   }, [selectedPurchase]);
+  useEffect(() => {
+    if (selectedLesson?.UPLEVEL) {
+      defApiFunc('getEducationContents', {
+        token: token,
+        productcode: selectedPurchase?.PRODUCTCODE.toString(),
+        uplevel: 0,
+      })
+        .then(response => {
+          // console.log("getEducationContents", response.data);
+          setUnitList(response?.data);
+        })
+        .catch(err => {
+          console.log('err', err);
+        });
+    }
+  }, [selectedLesson]);
 
   useEffect(() => {
-    if (selectedUnit && selectedPurchase) {
-      setLoading(true);
-      defApiFunc('getQuestionsForUplevel', {
-        token,
-        productcode: selectedPurchase.PRODUCTCODE,
-        uplevel: selectedUnit.ID,
-        maxQuestion: maxQuestion,
-        selected: '',
-        param: param ? 0 : 2,
-        users: '',
-      }).then(
-        res => {
-          if (res.data.length > 0) {
-            setQuestionList(res.data);
-            setSelectAll(false);
-            setImages(
-              res.data.map(item => {
-                return {
-                  uri: FILE_URL + item.PATH + '/' + item.FILENAME,
-                };
-              }),
-            );
-            setRefreshing(false);
-            setLoading(false);
-          } else {
-            setRefreshing(false);
-            setQuestionList([]);
-            setSelectedUnit(null);
-            setLoading(false);
-            Alert.alert('Uyarı', 'Bu ünite için soru bulunamadı.');
-          }
-        },
-        err => {
-          setRefreshing(false);
-
+    if (selectedUnit?.ID) {
+      defApiFunc('getEducationContents', {
+        token: token,
+        productcode: selectedPurchase?.PRODUCTCODE.toString(),
+        uplevel: selectedUnit?.ID,
+      })
+        .then(response => {
+          // console.log("getEducationContents", response.data);
+          // console.log("UNITLIST", response.data);
+          setChapterList(response?.data);
+        })
+        .catch(err => {
           console.log('err', err);
-          Alert.alert('Uyarı', 'Sorular getirilirken bir hata oluştu.');
-          setLoading(false);
-        },
-      );
+        });
     }
-  }, [selectedUnit, param, maxQuestion, refreshing]);
+  }, [selectedUnit]);
+  const [questions, setQuestions] = useState([]);
+  console.log(unitList, 'asd');
+  const [saveModalVisible, setSaveModalVisible] = useState(false);
+  useEffect(() => {
+    if (selectedChapter?.VIMEO_ID) {
+      defApiFunc('getQuestionsForVimeoId', {
+        token: token,
+        vimeoid: selectedChapter?.VIMEO_ID,
+        listcount: 10,
+      })
+        .then(response => {
+          // console.log("getEducationContents", response.data);
+          // console.log("VIMEO", response.data);
+          setQuestions(response?.data);
+        })
+        .catch(err => {
+          console.log('err', err);
+        });
+    }
+  }, [selectedChapter]);
+
+  // console.log(questions, "qwe");
+
+  useEffect(() => {
+    if (selectedChapter?.VIMEO_ID) {
+      fetch(`https://api.vimeo.com/videos/${selectedChapter?.VIMEO_ID}`, {
+        method: 'GET',
+        headers: {
+          Authorization: 'bearer a46bab98f2588bc7b4a6065569895150',
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          const videoUrl = data?.files?.find(
+            file => file?.rendition === userInfo.VIDEOQUALITY?.toString() + 'p',
+          )?.link;
+          setVimeoData(videoUrl);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [selectedChapter]);
   const [kurum, setKurum] = useState(null);
   useEffect(() => {
     defApiFunc('getGroups', {
@@ -206,484 +190,257 @@ const CreateTestScreen = ({ navigation }) => {
   console.log('selectedSchool', classList);
   const [selectedClassLevel, setSelectedClassLevel] = useState(null);
   const [classLevelList, setClassLevelList] = useState([]);
-  useEffect(() => {
-    if (selectedQuestionCodeList.length === 0) {
-      setSelectedQuestion([]);
-    } else {
-      const newSelectedQuestions = questionList.filter(question =>
-        selectedQuestionCodeList.includes(question.CODE),
-      );
-      const oldSelectedQuestions = selectedQuestion.filter(question => {
-        return selectedQuestionCodeList.includes(question.CODE);
-      });
-      const filterSame = [...newSelectedQuestions, ...oldSelectedQuestions].filter(
-        (item, index, self) => {
-          return index === self.findIndex(t => t.CODE === item.CODE);
-        },
-      );
-      setSelectedQuestion(filterSame);
-    }
-  }, [selectedQuestionCodeList]);
-  const [classLevel, setClassLevel] = useState(null);
+  // const MemoizedRenderHtml = React.memo(RenderHtml);
 
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 5,
+        alignItems: 'flex-start',
+        backgroundColor: COLORS.primary,
       }}>
       <View
         style={{
-          width: '100%',
-          marginVertical: 10,
-          paddingHorizontal: 5,
-          paddingRight: selectedPurchase || selectedUnit ? 10 : 5,
-          alignItems: 'center',
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 10,
+          marginLeft: 10,
         }}>
-        <TouchableOpacity
-          onPress={() => {
-            questionList.length > 0 && selectedUnit
-              ? setSelectedUnit(null)
-              : setSelectedPurchase(null);
-          }}
-          style={{
-            alignItems: 'center',
-            backfaceVisibility: 'hidden',
-            flexDirection: 'row',
-          }}>
-          {selectedPurchase || selectedUnit ? (
-            <TouchableOpacity
-              style={{
-                marginTop: 2.5,
-              }}
-              onPress={() => {
-                questionList.length > 0 && selectedUnit
+        {selectedLesson || selectedUnit || selectedChapter ? (
+          <TouchableOpacity
+            onPress={() => {
+              selectedChapter
+                ? setSelectedChapter(null)
+                : selectedUnit
                   ? setSelectedUnit(null)
-                  : setSelectedPurchase(null);
-              }}>
-              <Icon size={26} type={'entypo'} name={'chevron-left'} />
-            </TouchableOpacity>
-          ) : null}
-          <View
-            style={{
-              borderBottomColor: COLORS.blue,
-              borderBottomWidth: 2,
+                  : setSelectedLesson(null);
             }}>
-            <Text
-              style={{
-                ...BODY3,
-                fontSize: 16,
-                paddingHorizontal: 5,
-                color: COLORS.black,
-              }}>
-              {purchasedLessons && !selectedPurchase
-                ? 'Eğitim Seçiniz'
-                : selectedPurchase && !selectedUnit
-                  ? 'Ünite Seçiniz'
-                  : selectedUnit && questionList.length > 0
-                    ? 'Sorular'
-                    : 'Konu Seçiniz'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            setIsVisible(true);
-          }}>
-          <Icon color={COLORS.blue} name={'settings'} />
-        </TouchableOpacity>
-      </View>
-      {!selectedUnit && (
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            alignSelf: 'center',
-            paddingBottom: 100,
-          }}
-          style={{
-            width: '100%',
-          }}>
-          {purchasedLessons &&
-            !selectedPurchase &&
-            purchasedLessons.map(lesson => {
-              return lessonListComp({
-                lesson,
-                setSelectedLesson: setSelectedPurchase,
-                label:
-                  `${parseInt(lesson.VIDEOLEVEL) + parseInt('4')}` +
-                  '. sınıf' +
-                  ' - ' +
-                  lesson.NAME,
-              });
-            })}
-          {selectedPurchase &&
-            unitList.length > 0 &&
-            !selectedUnit &&
-            unitList.map(unit => {
-              return lessonListComp({
-                lesson: unit,
-                setSelectedLesson: setSelectedUnit,
-              });
-            })}
-        </ScrollView>
-      )}
-      {selectedUnit && questionList.length > 0 && (
+            <Icon name={'chevron-left'} />
+          </TouchableOpacity>
+        ) : null}
         <View
           style={{
-            flex: 1,
-            width: '100%',
+            borderBottomColor: COLORS.blue,
+            borderBottomWidth: 2,
+            alignItems: 'center',
           }}>
           <Text
             style={{
               ...BODY3,
-              alignSelf: 'center',
               fontSize: 16,
-              marginBottom: selectedQuestionCodeList.length > 0 ? 2.5 : 8,
+              paddingHorizontal: 5,
+              color: COLORS.black,
             }}>
-            Testte bulunacak soruları seçiniz.
+            {selectedChapter
+              ? selectedChapter?.NAME
+              : selectedUnit
+                ? 'Bölümler'
+                : selectedLesson
+                  ? 'Üniteler'
+                  : 'Derslerim'}
           </Text>
-          {selectedQuestionCodeList.length > 0 && (
-            <Text
-              style={{
-                ...BODY3,
-                alignSelf: 'center',
-                fontSize: 16,
-                marginVertical: 2.5,
-              }}>
-              Seçilen Soru Sayısı:{' '}
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: COLORS.blue,
-                }}>
-                {selectedQuestionCodeList.length}
-              </Text>
-            </Text>
-          )}
-          <View
-            style={{
-              flexDirection: 'row',
-              width: SIZES.width * 0.925,
-              marginBottom: 8,
-              marginTop: 2.5,
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={{
-                ...FONTS.BODY4,
-                fontSize: 16,
-                color: COLORS.black,
-              }}>
-              Tümünü Seç
-            </Text>
-            <Switch
-              color={COLORS.blue}
-              value={selectAll}
-              onValueChange={() => {
-                setSelectAll(!selectAll);
-                if (selectAll) {
-                  setSelectedQuestionCodeList(
-                    selectedQuestionCodeList.filter(
-                      question => !questionList.map(item => item.CODE).includes(question),
-                    ),
-                  );
-                } else {
-                  console.log('SELECTALL');
-                  setSelectedQuestionCodeList([
-                    ...selectedQuestionCodeList,
-                    ...questionList
-                      .filter(item => !selectedQuestionCodeList.includes(item.CODE))
-                      .map(item => item.CODE),
-                  ]);
-                }
-              }}
-            />
-          </View>
-          <FlashList
-            estimatedItemSize={SIZES.width * 0.4}
-            extraData={selectedQuestionCodeList}
-            data={questionList}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    if (selectedQuestionCodeList.includes(item.CODE)) {
-                      setSelectedQuestionCodeList(
-                        selectedQuestionCodeList.filter(question => question !== item.CODE),
-                      );
-                      selectedQuestion.map((question, i) => {
-                        if (question?.CODE === item?.CODE) {
-                          setSelectedQuestion(
-                            selectedQuestion.filter(
-                              (question, index) => question?.CODE !== item?.CODE,
-                            ),
-                          );
-                        }
-                      });
-                    } else {
-                      setSelectedQuestionCodeList([...selectedQuestionCodeList, item.CODE]);
-                      setSelectedQuestion([...selectedQuestion, item]);
-                    }
-                  }}
-                  style={{
-                    borderWidth: 2,
-                    borderStyle: 'dashed',
-                    borderColor: selectedQuestionCodeList.includes(item.CODE)
-                      ? COLORS.blue
-                      : COLORS.lightGrayTwo,
-                    paddingVertical: 5,
-                    borderRadius: 8,
-                    paddingBottom: 10,
-                    marginBottom: 10,
-                    alignItems: 'center',
-                  }}>
-                  <View
-                    style={{
-                      width: '100%',
-                      paddingLeft: 13,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text
-                      style={{
-                        ...BODY4,
-                        fontSize: 16,
-                        color: COLORS.black,
-                        marginBottom: 10,
-                      }}>
-                      {index + 1}. Soru
-                    </Text>
-                    <CheckBox
-                      containerStyle={{
-                        padding: 0,
-                        margin: 0,
-                      }}
-                      checked={selectedQuestionCodeList.includes(item.CODE)}
-                      color={COLORS.blue}
-                      value={selectedQuestionCodeList.includes(item.CODE)}
-                      onPress={() => {
-                        if (selectedQuestionCodeList.includes(item.CODE)) {
-                          setSelectedQuestionCodeList(
-                            selectedQuestionCodeList.filter(question => question !== item.CODE),
-                          );
-                        } else {
-                          setSelectedQuestionCodeList([...selectedQuestionCodeList, item.CODE]);
-                        }
-                      }}
-                    />
-                  </View>
-                  <View>
-                    {loading ? (
-                      <View
-                        style={{
-                          width: SIZES.width * 0.875,
-                          height: SIZES.width * 0.7,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: COLORS.lightGrayThree,
-                        }}>
-                        <Image
-                          onError={e => {
-                            console.log('errorIMAGE', e);
-                          }}
-                          placeholder={require('../../../../assets/gifs/loadingLogo.gif')}
-                          source={require('../../../../assets/gifs/loadingLogo.gif')}
-                          contentFit={'contain'}
-                          style={{
-                            width: SIZES.width * 0.875,
-                            height: isTablet() ? 300 : SIZES.width * 0.7,
-                            backgroundColor: loading ? COLORS.white : COLORS.lightGrayThree,
-                          }}
-                        />
-                      </View>
-                    ) : (
-                      <Image
-                        onError={e => {
-                          console.log('errorIMAGE', e);
-                        }}
-                        placeholder={require('../../../../assets/gifs/loadingLogo.gif')}
-                        source={
-                          loading
-                            ? require('../../../../assets/gifs/loadingLogo.gif')
-                            : {
-                                uri: FILE_URL + item.PATH + '/' + item.FILENAME,
-                              }
-                        }
-                        contentFit={'contain'}
-                        style={{
-                          width: SIZES.width * 0.875,
-                          height: SIZES.width * 0.7,
-                          backgroundColor: loading ? COLORS.white : COLORS.lightGrayThree,
-                        }}
-                      />
-                    )}
-                    <TouchableOpacity
-                      onPress={() => {
-                        setImageIndex(index);
-                        setIsImageVisible(true);
-                      }}
-                      style={{
-                        position: 'absolute',
-                        top: 5,
-                        borderRadius: 50,
-                        right: 5,
-                      }}>
-                      <Icon
-                        size={28}
-                        style={{
-                          backgroundColor: 'rgba(255,255,255,0.8)',
-                          borderRadius: 50,
-                          padding: 2,
-                        }}
-                        color={'rgba(0, 0, 0,.75)'}
-                        type={'feather'}
-                        name={'zoom-in'}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
         </View>
-      )}
-      <Modal
-        backdropColor={'#000'}
-        backdropOpacity={0}
-        visible={isVisible}
-        onBackdropPress={() => setIsVisible(false)}
-        onRequestClose={() => setIsVisible(false)}
-        animationType="slideInUp"
-        style={{
-          margin: 0,
-          flex: 1,
-          zIndex: 22,
+      </View>
+      <ScrollView
+        contentContainerStyle={{
           alignItems: 'center',
           paddingBottom: 100,
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          justifyContent: 'center',
+        }}
+        style={{
+          flex: 1,
+          width: SIZES.width,
         }}>
-        <KeyboardAvoidingView>
-          <View
+        {purchasedLessons &&
+          !selectedPurchase &&
+          purchasedLessons.map(lesson => {
+            return lessonListComp({
+              lesson,
+              setSelectedLesson: setSelectedPurchase,
+              setUnitList,
+            });
+          })}
+        {!selectedLesson &&
+          selectedPurchase &&
+          lessons.map(lesson =>
+            lessonListComp({
+              lesson,
+              setSelectedLesson,
+              setUnitList,
+            }),
+          )}
+        {selectedLesson &&
+          !selectedUnit &&
+          unitList?.map(unit =>
+            unitListComp({
+              lesson: unit,
+              setSelectedLesson: setSelectedUnit,
+              setChapterList,
+            }),
+          )}
+        {selectedUnit &&
+          !selectedChapter &&
+          chapterList?.map(chapter =>
+            chapterListComp({
+              chapter,
+              setSelectedChapter,
+            }),
+          )}
+        {selectedChapter && (
+          <ScrollView
             style={{
+              flex: 1,
+            }}
+            contentContainerStyle={{
+              paddingTop: 20,
+              paddingHorizontal: 20,
               alignItems: 'center',
-              paddingVertical: 16,
-              paddingTop: 8,
-              width: SIZES.width * 0.9,
-              borderRadius: 20,
-              paddingHorizontal: 16,
-              backgroundColor: 'white',
-              shadowOffset: {
-                width: 2,
-                height: 2,
-              },
-              shadowOpacity: 0.5,
-              shadowRadius: 13,
-              elevation: 3,
-
-              shadowColor: '#fff',
+              width: SIZES.width,
+              paddingBottom: 100,
             }}>
             <View
               style={{
-                width: '100%',
-                paddingVertical: 8,
-                marginBottom: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                width: 364,
+                height: 205,
+                backgroundColor: 'black',
+                marginBottom: 10,
+              }}>
+              {/*<WebView*/}
+              {/*    */}
+              {/*  allowsInlineMediaPlayback={"true"}*/}
+              {/*  source={{*/}
+              {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+              {/*  }}*/}
+              {/*/>*/}
+              {!isLoaded && (
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'black',
+                    position: 'absolute',
+                    zIndex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <ActivityIndicator color={'white'} />
+                </View>
+              )}
+              <Video
+                onError={error => console.log('error', error)}
+                onLoad={() => setIsLoaded(true)}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                resizeMode={ResizeMode.CONTAIN}
+                useNativeControls={true}
+                source={{
+                  uri: vimeoData,
+                }}
+              />
+              {/*<WebView*/}
+              {/*  allowsInlineMediaPlayback={true}*/}
+              {/*  allowsFullscreenVideo={false}*/}
+              {/*  source={{*/}
+              {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+              {/*  }}*/}
+              {/*  javaScriptEnabled={true}*/}
+              {/*  scrollEnabled={false}*/}
+              {/*  injectedJavaScript={template(*/}
+              {/*    "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+              {/*  )}*/}
+              {/*  mediaPlaybackRequiresUserAction={false}*/}
+              {/*/>*/}
+            </View>
+            <View
+              style={{
+                width: SIZES.width * 0.9,
                 paddingHorizontal: 10,
+                paddingVertical: 10,
+                flexDirection: 'row',
+                backgroundColor: COLORS.white,
+                justifyContent: 'space-between',
+                marginTop: 10,
+                borderRadius: 8,
+                ...SHADOWS.shadowOne,
+              }}>
+              <View
+                style={{
+                  maxWidth: '55%',
+                }}>
+                <Text style={{ ...H1, fontSize: 16 }}>{selectedChapter.NAME}</Text>
+                <Text style={{ ...H1, fontSize: 16 }}>{/*{selectedChapter.explanation}*/}</Text>
+              </View>
+              <View
+                style={{
+                  alignItems: 'flex-end',
+                }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  style={{
+                    backgroundColor: '#E64848',
+                    borderRadius: 8,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      ...BODY4,
+                      color: COLORS.white,
+                      fontSize: 12,
+                      paddingHorizontal: 10,
+                      paddingVertical: 8,
+                    }}>
+                    Eğitmene Puan Ver
+                  </Text>
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    ...BODY2,
+                    fontSize: 12,
+                    marginTop: 5,
+                  }}>
+                  {selectedChapter.TEACHER}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                width: SIZES.width * 0.85,
+                height: 36,
+
+                backgroundColor: COLORS.primaryDark,
+                marginTop: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 8,
+                ...SHADOWS.shadowOne,
               }}>
               <Text
                 style={{
                   ...BODY4,
-                  fontSize: 20,
-                  flex: 1,
-                  textAlign: 'center',
-                  color: COLORS.black,
+                  fontSize: 12,
+                  color: COLORS.white,
                 }}>
-                Test Ayarları
+                Eğitimle İlgili Çözümlü Örnek Sorular
               </Text>
-              <TouchableOpacity
-                style={{
-                  padding: 8,
-                  zIndex: 1,
-                }}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                onPress={() => setIsVisible(false)}>
-                <Icon name={'close'} size={24} />
-              </TouchableOpacity>
             </View>
-
-            {notificationSwitch({
-              title: 'Daha Önce Sorulan' + '\n' + 'Soruları Dahil Et',
-              value: param,
-              setValue: setParam,
-            })}
-
-            <View
-              style={{
-                alignItems: 'center',
-                marginBottom: 16,
-              }}>
-              {textInput({
-                placeholder: 'Listelenecek Maksimum Soru Sayısı',
-                value: maxQuestion,
-                onChangeText: text => {
-                  setMaxQuestion(text);
-                },
-                keyboardType: 'numeric',
-                label: 'Listelenecek Maks. Soru Sayısı',
-              })}
-            </View>
-            {mainButton({
-              text: 'Kaydet',
-              backgroundColor: '#445286',
-              onPress: () => {
-                setShowStudentModal(false);
-              },
-            })}
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-      {selectedQuestionCodeList?.length > 0 && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 100,
-            alignSelf: 'center',
-          }}>
-          {mainButton({
-            text: 'Öğrenci Seç',
-            backgroundColor: COLORS.blue,
-            onPress: () => {
-              setShowStudentModal(true);
-            },
-          })}
-        </View>
-      )}
+            {questions.map((question, index) =>
+              questionListComp({
+                question,
+                index,
+                setSelectedChapter,
+              }),
+            )}
+          </ScrollView>
+        )}
+      </ScrollView>
       <Modal
         backdropColor={'#000'}
         backdropOpacity={0}
         visible={saveModalVisible}
-        onBackdropPress={() => {
-          setSaveModalVisible(false);
-          setName('');
-          setDescription('');
-        }}
-        onRequestClose={() => {
-          setSaveModalVisible(false);
-          setName('');
-          setDescription('');
-        }}
+        onBackdropPress={() => setSaveModalVisible(false)}
         animationType="slideInUp"
+        onRequestClose={() => setSaveModalVisible(false)}
         style={{
           margin: 0,
           paddingVertical: 50,
@@ -736,12 +493,7 @@ const CreateTestScreen = ({ navigation }) => {
                 }}>
                 Test Oluştur
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setSaveModalVisible(false);
-                  setName('');
-                  setDescription('');
-                }}>
+              <TouchableOpacity onPress={() => setSaveModalVisible(false)}>
                 <Icon name={'close'} size={24} />
               </TouchableOpacity>
             </View>
@@ -762,6 +514,18 @@ const CreateTestScreen = ({ navigation }) => {
               </Text>
             </Text>
 
+            {/*<Text*/}
+            {/*  style={{*/}
+            {/*    ...BODY3,*/}
+            {/*    fontSize: 16,*/}
+            {/*    color: COLORS.darkGray,*/}
+            {/*    textAlign: "center",*/}
+            {/*    marginBottom: 16,*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  Sistemde kayıtlı mail adresinizi giriniz. Bilgileriniz kayıtlı cep*/}
+            {/*  telefonunuza gönderilecektir.*/}
+            {/*</Text>*/}
             <View style={{ marginVertical: 10 }}>
               <Text
                 style={{
@@ -923,56 +687,13 @@ const CreateTestScreen = ({ navigation }) => {
           </KeyboardAwareScrollView>
         </View>
       </Modal>
-      <ImageView
-        swipeToCloseEnabled={true}
-        images={images}
-        imageIndex={imageIndex}
-        visible={isImageVisible}
-        onRequestClose={() => setIsImageVisible(false)}
-      />
-      {loading && (
-        <Spinner
-          overlayColor={'rgba(0, 0, 0, 0.45)'}
-          textContent={'Yükleniyor...'}
-          textStyle={{
-            ...FONTS.BODY4,
-            fontSize: 20,
-            color: 'white',
-            marginBottom: 20,
-          }}
-          visible={true}
-        />
-      )}
-      {savingTest && (
-        <Spinner
-          overlayColor={'rgba(0, 0, 0, 0.45)'}
-          textContent={'Test oluşturuluyor...'}
-          textStyle={{
-            ...FONTS.BODY4,
-            fontSize: 20,
-            color: 'white',
-            marginBottom: 20,
-          }}
-          visible={true}
-        />
-      )}
       <Modal
         backdropColor={'#000'}
         backdropOpacity={0}
-        visible={showStudentModal}
-        onBackdropPress={() => {
-          setShowStudentModal(false);
-          if (!savingTest) {
-            setSelectedStudents([]);
-          }
-        }}
-        onRequestClose={() => {
-          setShowStudentModal(false);
-          if (!savingTest) {
-            setSelectedStudents([]);
-          }
-        }}
+        visible={saveModalVisible}
+        onBackdropPress={() => setShowStudentModal(false)}
         animationType="slideInUp"
+        onRequestClose={() => setShowStudentModal(false)}
         style={{
           margin: 0,
           paddingVertical: 50,
@@ -1012,30 +733,20 @@ const CreateTestScreen = ({ navigation }) => {
                 marginBottom: 12,
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
               }}>
               <Text
                 style={{
                   ...BODY4,
                   fontSize: 20,
-                  flex: 1,
+                  position: 'absolute',
+                  width: '100%',
                   textAlign: 'center',
                   color: COLORS.black,
                 }}>
                 Öğrenci Seç
               </Text>
-              <TouchableOpacity
-                style={{
-                  padding: 8,
-                  zIndex: 1,
-                }}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                onPress={() => {
-                  setShowStudentModal(false);
-                  if (!savingTest) {
-                    setSelectedStudents([]);
-                  }
-                }}>
+              <TouchableOpacity onPress={() => setSaveModalVisible(false)}>
                 <Icon name={'close'} size={24} />
               </TouchableOpacity>
             </View>
@@ -1293,7 +1004,11 @@ const CreateTestScreen = ({ navigation }) => {
           </KeyboardAwareScrollView>
         </View>
       </Modal>
+      {reviewTeacherModal({
+        isVisible: modalVisible,
+        setIsVisible: setModalVisible,
+      })}
     </View>
   );
 };
-export default CreateTestScreen;
+export default EducationScreen;

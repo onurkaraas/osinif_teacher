@@ -20,8 +20,8 @@ const SignInScreen = ({ navigation: { goBack } }) => {
     const [forgotEmail, setForgotEmail] = useState('');
 
     const initialValues = {
-        email: 'filizpinar@zubeydehanim.com.tr',
-        password: '9142',
+        email: '',
+        password: '',
     };
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const navigation = useNavigation();

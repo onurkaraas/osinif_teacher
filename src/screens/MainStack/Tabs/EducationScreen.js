@@ -1,5 +1,5 @@
 import { BODY2, BODY3, BODY4, H1 } from '../../../constants';
-import { COLORS, SHADOWS, SIZES } from '../../../constants/theme';
+import { COLORS, FONTS, SHADOWS, SIZES } from '../../../constants/theme';
 import {
   View,
   Text,
@@ -8,32 +8,47 @@ import {
   ScrollView,
   ActivityIndicator,
   FlatList,
-  Alert,
+  Linking,
 } from 'react-native';
-import { AirbnbRating, Icon, CheckBox } from '@rneui/base';
+import { AirbnbRating, Icon } from '@rneui/base';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { API_URL, defApiFunc, FILE_URL, REF_FILE_URL } from '../../../api';
 import { AuthContext } from '../../../context/AuthContext';
 import { ResizeMode, Video } from 'expo-av';
-import QuestionListComp from '../../../components/education/questionListComp';
+import questionListComp from '../../../components/screens/education/questionListComp';
 import QuestionModal from '../../../components/modals/QuestionModal';
 import ReviewTeacherModal from '../../../components/modals/reviewTeacherModal';
-import LessonList from '../../../components/education/lists/LessonList';
-import UnitList from '../../../components/education/lists/UnitList';
-import ChapterList from '../../../components/education/lists/ChapterList';
+import LessonList from '../../../components/screens/education/lists/LessonList';
+import UnitList from '../../../components/screens/education/lists/UnitList';
+import ChapterList from '../../../components/screens/education/lists/ChapterList';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useIsFocused } from '@react-navigation/native';
+import { isTablet } from '../../../helpers/deviceInfo';
+import PurchasedList from '../../../components/screens/education/lists/PurchasedList';
 import Modal from 'react-native-modal';
-import { FlashList } from '@shopify/flash-list';
-import textInput from '../../../components/main/textInput';
-import { FONTS } from '../../../constants/theme';
-import { Switch } from '@rneui/base';
-import PickerWithLabel  from '../../../components/main/pickerWithLabel';
-import { mainButton } from '../../../components/buttons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Switch } from '@rneui/base';
+import PickerWithLabel from '../../../components/main/pickerWithLabel';
+import { mainButton } from '../../../components/buttons';
 import Spinner from 'react-native-loading-spinner-overlay';
+import textInput from '../../../components/main/textInput';
+
 const EducationScreen = ({ navigation }) => {
   const { token, userInfo } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const onFullscreenUpdate = async ({ fullscreenUpdate }) => {
+    switch (fullscreenUpdate) {
+      case (0, 1):
+      case isFocused:
+        await ScreenOrientation.unlockAsync();
+        // only on Android required
+        break;
+      case (2, 3):
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP); // only on Android required
+        break;
+    }
+  };
+
   const [lessons, setLessons] = useState([]);
   const [purchasedLessons, setPurchasedLessons] = useState([]);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
@@ -64,7 +79,8 @@ const EducationScreen = ({ navigation }) => {
   const [savingTest, setSavingTest] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [showStudentModal, setShowStudentModal] = useState(false);
-
+  const questionVideoRef = useRef(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   useEffect(() => {
     if (!isFocused && videoRef?.current) {
       videoRef?.current?.pauseAsync();
@@ -173,20 +189,20 @@ const EducationScreen = ({ navigation }) => {
         .finally(() => setLoading(false));
     }
   }, [selectedChapter]);
-const [kurum, setKurum] = useState([]);
-    useEffect(() => {
-        defApiFunc('getGroups', {
-            token: token,
-            uplevel: 15835,
-        })
-            .then(res => {
-                setKurum(res.data);
-            })
-            .catch(err => {
-                console.log('Error fetching students:', err);
-                Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
-            });
-    }, []);
+  const [kurum, setKurum] = useState([]);
+  useEffect(() => {
+    defApiFunc('getGroups', {
+      token: token,
+      uplevel: 15835,
+    })
+      .then(res => {
+        setKurum(res.data);
+      })
+      .catch(err => {
+        console.log('Error fetching students:', err);
+        Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
+      });
+  }, []);
   console.log(chapterList);
 
   useEffect(() => {
@@ -230,8 +246,26 @@ const [kurum, setKurum] = useState([]);
     }
   }, [selectedSchool]);
   const [saveModalVisible, setSaveModalVisible] = useState(false);
+  const [groupedLessons, setGroupedLessons] = useState([]);
+  useEffect(() => {
+    const groupedArray = lessons.reduce((acc, curr) => {
+      const existingGroup = acc.find(group => group[0].VIDEOLEVEL === curr.VIDEOLEVEL);
 
+      if (existingGroup) {
+        existingGroup.push(curr); // Add the current object to the existing group
+      } else {
+        acc.push([curr]); // Create a new group with the current object
+      }
+
+      return acc;
+    }, []);
+
+    setGroupedLessons(groupedArray);
+  }, [lessons]);
+  console.log(JSON.stringify(groupedLessons), 'groupedLessons');
   const isFocused = useIsFocused();
+  const [selectedTab, setSelectedTab] = useState(0);
+
   let videoRef = useRef(null);
 
   useEffect(() => {
@@ -251,14 +285,21 @@ const [kurum, setKurum] = useState([]);
       }}>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginTop: 10,
-          marginLeft: 10,
+          width: SIZES.width,
+          marginBottom: 10,
+          backgroundColor: COLORS.purple,
         }}>
-        {selectedLesson || selectedUnit || selectedChapter || selectedPurchase ? (
-          <TouchableOpacity
-            onPress={() => {
+        <TouchableOpacity
+          style={{
+            zIndex: 2,
+            marginLeft: 15,
+            marginBottom: 10,
+            marginTop: 15,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+          onPress={() => {
+            if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
               selectedChapter
                 ? setSelectedChapter(null)
                 : selectedUnit
@@ -266,24 +307,50 @@ const [kurum, setKurum] = useState([]);
                   : selectedLesson
                     ? setSelectedLesson(null)
                     : setSelectedPurchase(null);
-            }}>
-            <Icon type={'feather'} name={'chevron-left'} />
-          </TouchableOpacity>
-        ) : null}
-        <View
-          style={{
-            borderBottomColor: COLORS.blue,
-            borderBottomWidth: 2,
-            alignItems: 'center',
+            }
           }}>
+          <TouchableOpacity
+            onPress={() => {
+              if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
+                selectedChapter
+                  ? setSelectedChapter(null)
+                  : selectedUnit
+                    ? setSelectedUnit(null)
+                    : selectedLesson
+                      ? setSelectedLesson(null)
+                      : setSelectedPurchase(null);
+              }
+            }}>
+            {(selectedLesson || selectedUnit || selectedChapter || selectedPurchase) && (
+              <Icon
+                onPress={() => {
+                  if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
+                    selectedChapter
+                      ? setSelectedChapter(null)
+                      : selectedUnit
+                        ? setSelectedUnit(null)
+                        : selectedLesson
+                          ? setSelectedLesson(null)
+                          : setSelectedPurchase(null);
+                  }
+                }}
+                type={'feather'}
+                size={24}
+                color={'white'}
+                name={'chevron-left'}
+              />
+            )}
+          </TouchableOpacity>
           <Text
             numberOfLines={2}
             style={{
               ...BODY3,
               maxWidth: SIZES.width * 0.9,
               fontSize: 16,
+              alignSelf: 'center',
+              alignItems: 'center',
               paddingHorizontal: 5,
-              color: COLORS.black,
+              color: COLORS.white,
             }}>
             {selectedChapter
               ? selectedChapter?.NAME
@@ -293,7 +360,7 @@ const [kurum, setKurum] = useState([]);
                   ? 'Üniteler'
                   : 'Derslerim'}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View>
         {loading ? (
@@ -323,13 +390,29 @@ const [kurum, setKurum] = useState([]);
             {/*      setUnitList,*/}
             {/*    });*/}
             {/*  })}*/}
+            {/*{!selectedPurchase && (*/}
+            {/*  <PurchasedList*/}
+            {/*    data={purchasedLessons}*/}
+            {/*    setUnitList={setLessons}*/}
+            {/*    setSelectedLesson={setSelectedPurchase}*/}
+            {/*  />*/}
+            {/*)}*/}
             {!selectedLesson && (
-              <LessonList
-                data={lessons}
-                setUnitList={setUnitList}
-                setSelectedLesson={setSelectedLesson}
-              />
+              <ScrollView
+                style={{
+                  flex: 1,
+                }}
+                contentContainerStyle={{
+                  paddingBottom: 160,
+                }}>
+                <PurchasedList
+                  data={groupedLessons}
+                  setUnitList={setUnitList}
+                  setSelectedLesson={setSelectedLesson}
+                />
+              </ScrollView>
             )}
+
             {selectedLesson && !selectedUnit && (
               <UnitList
                 data={unitList}
@@ -341,23 +424,19 @@ const [kurum, setKurum] = useState([]);
               <ChapterList data={chapterList} setSelectedChapter={setSelectedChapter} />
             )}
             {selectedChapter && (
-              <ScrollView
+              <View
                 style={{
                   flex: 1,
-                }}
-                contentContainerStyle={{
                   paddingTop: 20,
-                  paddingHorizontal: 20,
-                  alignItems: 'center',
                   width: SIZES.width,
-                  paddingBottom: 125,
                 }}>
                 <View
                   style={{
-                    width: 364,
-                    height: 205,
+                    width: isTablet() ? SIZES.width * 0.9 : 364,
+                    height: isTablet() ? SIZES.height * 0.3 : 205,
                     backgroundColor: 'black',
                     marginBottom: 10,
+                    alignSelf: 'center',
                   }}>
                   {/*<WebView*/}
                   {/*    */}
@@ -382,7 +461,15 @@ const [kurum, setKurum] = useState([]);
 
                   <Video
                     ref={videoRef}
+                    onPlaybackStatusUpdate={value => {
+                      if (value.isPlaying) {
+                        setIsVideoPlaying(true);
+                      } else {
+                        setIsVideoPlaying(false);
+                      }
+                    }}
                     shouldPlay={false}
+                    onFullscreenUpdate={onFullscreenUpdate}
                     onError={error => console.log('error', error)}
                     onLoad={() => setIsLoaded(true)}
                     style={{
@@ -419,6 +506,7 @@ const [kurum, setKurum] = useState([]);
                     justifyContent: 'space-between',
                     marginTop: 10,
                     borderRadius: 8,
+                    alignSelf: 'center',
                     ...SHADOWS.shadowOne,
                   }}>
                   <View
@@ -464,42 +552,92 @@ const [kurum, setKurum] = useState([]);
                 <View
                   style={{
                     width: SIZES.width * 0.85,
-                    height: 36,
-
-                    backgroundColor: COLORS.primaryDark,
-                    marginTop: 16,
-                    marginBottom: 4,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 8,
-                    ...SHADOWS.shadowOne,
+                    flexDirection: 'row',
+                    alignSelf: 'center',
+                    justifyContent: 'space-between',
                   }}>
-                  <Text
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedTab(1);
+                    }}
                     style={{
-                      ...BODY4,
-                      fontSize: 12,
-                      color: COLORS.white,
+                      width: (SIZES.width * 0.85) / 2 - 10,
+                      height: 36,
+
+                      backgroundColor: selectedTab === 1 ? COLORS.primaryDark : COLORS.white,
+                      marginTop: 16,
+                      marginBottom: 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      ...SHADOWS.shadowOne,
                     }}>
-                    Eğitimle İlgili Çözümlü Örnek Sorular
-                  </Text>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        fontSize: 12,
+                        color: selectedTab === 1 ? COLORS.white : COLORS.black,
+                      }}>
+                      Bölümler
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedTab(0);
+                    }}
+                    style={{
+                      width: (SIZES.width * 0.85) / 2 - 10,
+                      height: 36,
+                      backgroundColor: selectedTab === 0 ? COLORS.primaryDark : COLORS.white,
+                      marginTop: 16,
+                      marginBottom: 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      ...SHADOWS.shadowOne,
+                    }}>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        fontSize: 12,
+                        color: selectedTab === 0 ? COLORS.white : COLORS.black,
+                      }}>
+                      Örnek Sorular
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                {questions?.map((question, index) => (
-                  <QuestionListComp
-                    key={index}
-                    question={question}
-                    index={index}
-                    setSelectedChapter={setSelectedChapter}
-                    setQuestionModalVisible={setQuestionModalVisible}
-                    setSelectedQuestion={setSelectedQuestion}
-                    setQuestionModalType={setQuestionModalType}
-                  />
-                ))}
+                {selectedTab === 0 ? (
+                  <ScrollView
+                    contentContainerStyle={{
+                      alignItems: 'center',
+                      paddingBottom: 120,
+                    }}>
+                    {questions?.map((question, index) =>
+                      questionListComp({
+                        question,
+                        index,
+                        setSelectedChapter,
+                        setQuestionModalVisible,
+                        setSelectedQuestion,
+                        setQuestionModalType,
+                      }),
+                    )}
+                  </ScrollView>
+                ) : (
+                  <ChapterList data={chapterList} setSelectedChapter={setSelectedChapter} />
+                )}
                 {questions.length === 0 && (
                   <View>
-                    <Text style={{ ...BODY4, color: COLORS.black }}>Soru Bulunamadı</Text>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        color: COLORS.black,
+                      }}>
+                      Soru Bulunamadı
+                    </Text>
                   </View>
                 )}
-              </ScrollView>
+              </View>
             )}
           </View>
         )}
@@ -517,330 +655,333 @@ const [kurum, setKurum] = useState([]);
       {/*  token,*/}
       {/*})}*/}
       <QuestionModal
+        onFullscreenUpdate={onFullscreenUpdate}
+        token={token}
         isVisible={questionModalVisible}
         setIsVisible={setQuestionModalVisible}
         selectedQuestion={selectedQuestion}
         questionModalType={questionModalType}
         setQuestionModalType={setQuestionModalType}
         userInfo={userInfo}
+        innerRef={questionVideoRef}
       />
-        <Modal
-            backdropColor={'#000'}
-            backdropOpacity={0}
-            visible={saveModalVisible}
-            onBackdropPress={() => setShowStudentModal(false)}
-            animationType="slideInUp"
-            onRequestClose={() => setShowStudentModal(false)}
-            style={{
-                margin: 0,
-                paddingVertical: 50,
-                flex: 1,
-                height: SIZES.height,
-                width: SIZES.width,
-                zIndex: 22,
-                alignItems: 'center',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                justifyContent: 'center',
+      <Modal
+        backdropColor={'#000'}
+        backdropOpacity={0}
+        visible={saveModalVisible}
+        onBackdropPress={() => setShowStudentModal(false)}
+        animationType="slideInUp"
+        onRequestClose={() => setShowStudentModal(false)}
+        style={{
+          margin: 0,
+          paddingVertical: 50,
+          flex: 1,
+          height: SIZES.height,
+          width: SIZES.width,
+          zIndex: 22,
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          justifyContent: 'center',
+        }}>
+        <View
+          style={{
+            paddingVertical: 16,
+            paddingTop: 8,
+            borderRadius: 20,
+            backgroundColor: 'white',
+            width: SIZES.width * 0.9,
+            height: SIZES.height * 0.8,
+            shadowOffset: {
+              width: 2,
+              height: 2,
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 13,
+            elevation: 3,
+            shadowColor: '#fff',
+          }}>
+          <KeyboardAwareScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 10,
             }}>
             <View
+              style={{
+                width: '100%',
+                paddingVertical: 8,
+                marginBottom: 12,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+              }}>
+              <Text
                 style={{
-                    paddingVertical: 16,
-                    paddingTop: 8,
-                    borderRadius: 20,
-                    backgroundColor: 'white',
-                    width: SIZES.width * 0.9,
-                    height: SIZES.height * 0.8,
-                    shadowOffset: {
-                        width: 2,
-                        height: 2,
-                    },
-                    shadowOpacity: 0.5,
-                    shadowRadius: 13,
-                    elevation: 3,
-                    shadowColor: '#fff',
+                  ...BODY4,
+                  fontSize: 20,
+                  position: 'absolute',
+                  width: '100%',
+                  textAlign: 'center',
+                  color: COLORS.black,
                 }}>
-                <KeyboardAwareScrollView
-                    contentContainerStyle={{
-                        paddingHorizontal: 10,
-                    }}>
-                    <View
-                        style={{
-                            width: '100%',
-                            paddingVertical: 8,
-                            marginBottom: 12,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                        }}>
-                        <Text
-                            style={{
-                                ...BODY4,
-                                fontSize: 20,
-                                position: 'absolute',
-                                width: '100%',
-                                textAlign: 'center',
-                                color: COLORS.black,
-                            }}>
-                            Öğrenci Seç
-                        </Text>
-                        <TouchableOpacity onPress={() => setShowStudentModal(false)}>
-                            <Icon name={'close'} size={24} />
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={{ marginVertical: 10 }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                width: '100%',
-                                marginBottom: 8,
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                            }}>
-                            <Text
-                                style={{
-                                    ...BODY3,
-                                    fontSize: 16,
-                                }}>
-                                Seçilen Öğrenci Sayısı: {selectedStudents.length}
-                            </Text>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}>
-                                <Text
-                                    style={{
-                                        ...FONTS.BODY4,
-                                        fontSize: 16,
-                                        color: COLORS.black,
-                                        marginRight: 10,
-                                    }}>
-                                    Tümünü Seç
-                                </Text>
-                                <Switch
-                                    color={COLORS.blue}
-                                    value={selectedStudents.length === studentList.length}
-                                    onValueChange={() => {
-                                        if (selectedStudents.length === studentList.length) {
-                                            setSelectedStudents([]);
-                                        } else {
-                                            setSelectedStudents(studentList.map(student => student.ID));
-                                        }
-                                    }}
-                                />
-                            </View>
-                        </View>
-                        <PickerWithLabel
-                            type={'SCROLLVIEW'}
-                            placeholder={'Şehir Seçiniz'}
-                            searchPlaceholder={'Şehir Ara'}
-                            setValue={setSelectedSchool}
-                            selectedValue={selectedSchool}
-                            setItems={setSchoolList}
-                            shadow={true}
-                            onValueChange={value => {
-                                setSelectedSchool(value);
-                                setSelectedClass(null);
-                                // Get students for selected school
-                            }}
-                            items={schoolList}
-                            label={'Kurum Seç'}
-                            value={'ID'}
-                            itemKey={'NAME'}
-                            style={{ height: 50, width: '100%' }}
-                        />
-                        <PickerWithLabel
-                            type={'SCROLLVIEW'}
-                            placeholder={'Sinif Seçiniz'}
-                            setValue={setSelectedClass}
-                            selectedValue={selectedClass}
-                            setItems={setClassList}
-                            shadow={true}
-                            onValueChange={value => {
-                                setSelectedClass(value);
-                                // Get students for selected class
-                                defApiFunc('getGroups', {
-                                    token: token,
-                                    uplevel: value,
-                                })
-                                    .then(res => {
-                                        console.log('res', res.data, 'asd', value);
-                                        setClassLevelList(res.data);
-                                    })
-                                    .catch(err => {
-                                        console.log('Error fetching students:', err);
-                                        Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
-                                    });
-                            }}
-                            items={classList}
-                            label={'Sınıf Seç'}
-                            value={'ID'}
-                            itemKey={'NAME'}
-                            style={{ height: 50, width: '100%', marginTop: 10 }}
-                        />
-                        <PickerWithLabel
-                            type={'SCROLLVIEW'}
-                            placeholder={'Sinif Seçiniz'}
-                            setValue={setSelectedClassLevel}
-                            selectedValue={selectedClassLevel}
-                            setItems={setClassLevelList}
-                            shadow={true}
-                            onValueChange={value => {
-                                defApiFunc('getAccountsInClass', {
-                                    id: value,
-                                })
-                                    .then(res => {
-                                        setStudentList(res.data);
-                                    })
-                                    .catch(err => {
-                                        console.log('Error fetching students:', err);
-                                        Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
-                                    });
-                            }}
-                            items={classLevelList}
-                            label={'Sınıf Seç'}
-                            value={'ID'}
-                            itemKey={'NAME'}
-                            style={{ height: 50, width: '100%', marginTop: 10 }}
-                        />
-                        {savingTest && (
-                            <Spinner
-                                overlayColor={'rgba(0, 0, 0, 0.45)'}
-                                textContent={'Test oluşturuluyor...'}
-                                textStyle={{
-                                    ...FONTS.BODY4,
-                                    fontSize: 20,
-                                    color: 'white',
-                                    marginBottom: 20,
-                                }}
-                                visible={true}
-                            />
-                        )}
-                        <View
-                            style={{
-                                height: SIZES.height * 0.4,
-                                borderWidth: 1,
-                                borderColor: COLORS.lightGrayTwo,
-                                borderRadius: 8,
-                                padding: 10,
-                            }}>
-                            <FlatList
-                                data={studentList}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            if (selectedStudents.includes(item.ID)) {
-                                                setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
-                                            } else {
-                                                setSelectedStudents([...selectedStudents, item.ID]);
-                                            }
-                                        }}
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            paddingVertical: 8,
-                                            borderBottomWidth: 1,
-                                            borderBottomColor: COLORS.lightGrayTwo,
-                                        }}>
-                                        <CheckBox
-                                            checked={selectedStudents.includes(item.ID)}
-                                            onPress={() => {
-                                                if (selectedStudents.includes(item.ID)) {
-                                                    setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
-                                                } else {
-                                                    setSelectedStudents([...selectedStudents, item.ID]);
-                                                }
-                                            }}
-                                            containerStyle={{
-                                                padding: 0,
-                                                margin: 0,
-                                            }}
-                                        />
-                                        <Text
-                                            style={{
-                                                ...BODY4,
-                                                marginLeft: 10,
-                                                color: COLORS.black,
-                                            }}>
-                                            {item.NAME} {item.LASTNAME}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-                            />
-                        </View>
-                    </View>
-
-                    {textInput({
-                        placeholder: 'Exam Adı',
-                        value: name,
-                        onChangeText: text => {
-                            setName(text);
-                        },
-                        label: 'Ödev Adı',
-                    })}
-                    {textInput({
-                        placeholder: 'Exam Açıklaması',
-                        value: description,
-                        onChangeText: text => {
-                            setDescription(text);
-                        },
-                        label: 'Ödev Açıklaması',
-                    })}
-
-                    <View
-                        style={{
-                            alignSelf: 'center',
-                            paddingTop: 20,
-                            paddingBottom: 10,
-                        }}>
-                        {mainButton({
-                            text: 'Kaydet',
-                            backgroundColor: '#445286',
-                            onPress: () => {
-                                console.log(
-                                    selectedQuestionCodeList.length,
-                                    name.length,
-                                    selectedStudents.length,
-                                    'LENGTH',
-                                );
-                                if (selectedQuestionCodeList.length > 0 && selectedStudents.length > 0) {
-                                    setSavingTest(true); // Show loading
-                                    defApiFunc('setUserExam', {
-                                        token: token,
-                                        examtype: 2,
-                                        m_name: name,
-                                        m_description: description,
-                                        questions: selectedQuestionCodeList.join(','),
-                                        start: '02.10.2025',
-                                        expire: '07.12.2025',
-                                        users: selectedStudents.join(','),
-                                    })
-                                        .then(res => {
-                                            setSavingTest(false); // Hide loading
-                                            if (res.data[0].DATA) {
-                                                setSaveModalVisible(false);
-                                                setShowStudentModal(false);
-                                                setSelectedStudents([]);
-                                                Alert.alert('Test oluşturuldu.');
-                                            } else {
-                                                Alert.alert(res.data[0].MESSAGE);
-                                            }
-                                        })
-                                        .catch(err => {
-                                            setSavingTest(false); // Hide loading on error
-                                            console.log(err.data);
-                                            Alert.alert('Hata', 'Test oluşturulurken bir hata oluştu.');
-                                        });
-                                } else {
-                                    Alert.alert('Lütfen tüm alanları doldurunuz ve en az bir öğrenci seçiniz.');
-                                }
-                            },
-                        })}
-                    </View>
-                </KeyboardAwareScrollView>
+                Öğrenci Seç
+              </Text>
+              <TouchableOpacity onPress={() => setSaveModalVisible(false)}>
+                <Icon name={'close'} size={24} />
+              </TouchableOpacity>
             </View>
-        </Modal>
+
+            <View style={{ marginVertical: 10 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  marginBottom: 8,
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    ...BODY3,
+                    fontSize: 16,
+                  }}>
+                  Seçilen Öğrenci Sayısı: {selectedStudents.length}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      ...FONTS.BODY4,
+                      fontSize: 16,
+                      color: COLORS.black,
+                      marginRight: 10,
+                    }}>
+                    Tümünü Seç
+                  </Text>
+                  <Switch
+                    color={COLORS.blue}
+                    value={selectedStudents.length === studentList.length}
+                    onValueChange={() => {
+                      if (selectedStudents.length === studentList.length) {
+                        setSelectedStudents([]);
+                      } else {
+                        setSelectedStudents(studentList.map(student => student.ID));
+                      }
+                    }}
+                  />
+                </View>
+              </View>
+              <PickerWithLabel
+                type={'SCROLLVIEW'}
+                placeholder={'Şehir Seçiniz'}
+                searchPlaceholder={'Şehir Ara'}
+                setValue={setSelectedSchool}
+                selectedValue={selectedSchool}
+                setItems={setSchoolList}
+                shadow={true}
+                onValueChange={value => {
+                  setSelectedSchool(value);
+                  setSelectedClass(null);
+                  // Get students for selected school
+                }}
+                items={schoolList}
+                label={'Kurum Seç'}
+                value={'ID'}
+                itemKey={'NAME'}
+                style={{ height: 50, width: '100%' }}
+              />
+              <PickerWithLabel
+                type={'SCROLLVIEW'}
+                placeholder={'Sinif Seçiniz'}
+                setValue={setSelectedClass}
+                selectedValue={selectedClass}
+                setItems={setClassList}
+                shadow={true}
+                onValueChange={value => {
+                  setSelectedClass(value);
+                  // Get students for selected class
+                  defApiFunc('getGroups', {
+                    token: token,
+                    uplevel: value,
+                  })
+                    .then(res => {
+                      console.log('res', res.data, 'asd', value);
+                      setClassLevelList(res.data);
+                    })
+                    .catch(err => {
+                      console.log('Error fetching students:', err);
+                      Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
+                    });
+                }}
+                items={classList}
+                label={'Sınıf Seç'}
+                value={'ID'}
+                itemKey={'NAME'}
+                style={{ height: 50, width: '100%', marginTop: 10 }}
+              />
+              <PickerWithLabel
+                type={'SCROLLVIEW'}
+                placeholder={'Sinif Seçiniz'}
+                setValue={setSelectedClassLevel}
+                selectedValue={selectedClassLevel}
+                setItems={setClassLevelList}
+                shadow={true}
+                onValueChange={value => {
+                  defApiFunc('getAccountsInClass', {
+                    id: value,
+                  })
+                    .then(res => {
+                      setStudentList(res.data);
+                    })
+                    .catch(err => {
+                      console.log('Error fetching students:', err);
+                      Alert.alert('Hata', 'Öğrenci listesi alınamadı.');
+                    });
+                }}
+                items={classLevelList}
+                label={'Sınıf Seç'}
+                value={'ID'}
+                itemKey={'NAME'}
+                style={{ height: 50, width: '100%', marginTop: 10 }}
+              />
+              {savingTest && (
+                <Spinner
+                  overlayColor={'rgba(0, 0, 0, 0.45)'}
+                  textContent={'Test oluşturuluyor...'}
+                  textStyle={{
+                    ...FONTS.BODY4,
+                    fontSize: 20,
+                    color: 'white',
+                    marginBottom: 20,
+                  }}
+                  visible={true}
+                />
+              )}
+              <View
+                style={{
+                  height: SIZES.height * 0.4,
+                  borderWidth: 1,
+                  borderColor: COLORS.lightGrayTwo,
+                  borderRadius: 8,
+                  padding: 10,
+                }}>
+                <FlatList
+                  data={studentList}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (selectedStudents.includes(item.ID)) {
+                          setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
+                        } else {
+                          setSelectedStudents([...selectedStudents, item.ID]);
+                        }
+                      }}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 8,
+                        borderBottomWidth: 1,
+                        borderBottomColor: COLORS.lightGrayTwo,
+                      }}>
+                      <CheckBox
+                        checked={selectedStudents.includes(item.ID)}
+                        onPress={() => {
+                          if (selectedStudents.includes(item.ID)) {
+                            setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
+                          } else {
+                            setSelectedStudents([...selectedStudents, item.ID]);
+                          }
+                        }}
+                        containerStyle={{
+                          padding: 0,
+                          margin: 0,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          ...BODY4,
+                          marginLeft: 10,
+                          color: COLORS.black,
+                        }}>
+                        {item.NAME} {item.LASTNAME}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </View>
+
+            {textInput({
+              placeholder: 'Exam Adı',
+              value: name,
+              onChangeText: text => {
+                setName(text);
+              },
+              label: 'Ödev Adı',
+            })}
+            {textInput({
+              placeholder: 'Exam Açıklaması',
+              value: description,
+              onChangeText: text => {
+                setDescription(text);
+              },
+              label: 'Ödev Açıklaması',
+            })}
+
+            <View
+              style={{
+                alignSelf: 'center',
+                paddingTop: 20,
+                paddingBottom: 10,
+              }}>
+              {mainButton({
+                text: 'Kaydet',
+                backgroundColor: '#445286',
+                onPress: () => {
+                  console.log(
+                    selectedQuestionCodeList.length,
+                    name.length,
+                    selectedStudents.length,
+                    'LENGTH',
+                  );
+                  if (selectedQuestionCodeList.length > 0 && selectedStudents.length > 0) {
+                    setSavingTest(true); // Show loading
+                    defApiFunc('setUserExam', {
+                      token: token,
+                      examtype: 2,
+                      m_name: name,
+                      m_description: description,
+                      questions: selectedQuestionCodeList.join(','),
+                      start: '02.10.2025',
+                      expire: '07.12.2025',
+                      users: selectedStudents.join(','),
+                    })
+                      .then(res => {
+                        setSavingTest(false); // Hide loading
+                        if (res.data[0].DATA) {
+                          setSaveModalVisible(false);
+                          setShowStudentModal(false);
+                          setSelectedStudents([]);
+                          Alert.alert('Test oluşturuldu.');
+                        } else {
+                          Alert.alert(res.data[0].MESSAGE);
+                        }
+                      })
+                      .catch(err => {
+                        setSavingTest(false); // Hide loading on error
+                        console.log(err.data);
+                        Alert.alert('Hata', 'Test oluşturulurken bir hata oluştu.');
+                      });
+                  } else {
+                    Alert.alert('Lütfen tüm alanları doldurunuz ve en az bir öğrenci seçiniz.');
+                  }
+                },
+              })}
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
+      </Modal>
     </View>
   );
 };

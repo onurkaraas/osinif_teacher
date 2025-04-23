@@ -201,35 +201,72 @@ const EducationScreen = ({ navigation }) => {
       }}>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginTop: 10,
-          marginLeft: 10,
+          width: SIZES.width,
+          marginBottom: 10,
+          backgroundColor: COLORS.purple,
         }}>
-        {selectedLesson || selectedUnit || selectedChapter ? (
-          <TouchableOpacity
-            onPress={() => {
+        <TouchableOpacity
+          style={{
+            zIndex: 2,
+            marginLeft: 15,
+            marginBottom: 10,
+            marginTop: 15,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+          onPress={() => {
+            if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
               selectedChapter
                 ? setSelectedChapter(null)
                 : selectedUnit
                   ? setSelectedUnit(null)
-                  : setSelectedLesson(null);
-            }}>
-            <Icon name={'chevron-left'} />
-          </TouchableOpacity>
-        ) : null}
-        <View
-          style={{
-            borderBottomColor: COLORS.blue,
-            borderBottomWidth: 2,
-            alignItems: 'center',
+                  : selectedLesson
+                    ? setSelectedLesson(null)
+                    : setSelectedPurchase(null);
+            }
           }}>
+          <TouchableOpacity
+            onPress={() => {
+              if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
+                selectedChapter
+                  ? setSelectedChapter(null)
+                  : selectedUnit
+                    ? setSelectedUnit(null)
+                    : selectedLesson
+                      ? setSelectedLesson(null)
+                      : setSelectedPurchase(null);
+              }
+            }}>
+            {(selectedLesson || selectedUnit || selectedChapter || selectedPurchase) && (
+              <Icon
+                onPress={() => {
+                  if (selectedLesson || selectedUnit || selectedChapter || selectedPurchase) {
+                    selectedChapter
+                      ? setSelectedChapter(null)
+                      : selectedUnit
+                        ? setSelectedUnit(null)
+                        : selectedLesson
+                          ? setSelectedLesson(null)
+                          : setSelectedPurchase(null);
+                  }
+                }}
+                type={'feather'}
+                size={24}
+                color={'white'}
+                name={'chevron-left'}
+              />
+            )}
+          </TouchableOpacity>
           <Text
+            numberOfLines={2}
             style={{
               ...BODY3,
+              maxWidth: SIZES.width * 0.9,
               fontSize: 16,
+              alignSelf: 'center',
+              alignItems: 'center',
               paddingHorizontal: 5,
-              color: COLORS.black,
+              color: COLORS.white,
             }}>
             {selectedChapter
               ? selectedChapter?.NAME
@@ -239,458 +276,336 @@ const EducationScreen = ({ navigation }) => {
                   ? 'Üniteler'
                   : 'Derslerim'}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: 'center',
-          paddingBottom: 100,
-        }}
-        style={{
-          flex: 1,
-          width: SIZES.width,
-        }}>
-        {purchasedLessons &&
-          !selectedPurchase &&
-          purchasedLessons.map(lesson => {
-            return lessonListComp({
-              lesson,
-              setSelectedLesson: setSelectedPurchase,
-              setUnitList,
-            });
-          })}
-        {!selectedLesson &&
-          selectedPurchase &&
-          lessons.map(lesson =>
-            lessonListComp({
-              lesson,
-              setSelectedLesson,
-              setUnitList,
-            }),
-          )}
-        {selectedLesson &&
-          !selectedUnit &&
-          unitList?.map(unit =>
-            unitListComp({
-              lesson: unit,
-              setSelectedLesson: setSelectedUnit,
-              setChapterList,
-            }),
-          )}
-        {selectedUnit &&
-          !selectedChapter &&
-          chapterList?.map(chapter =>
-            chapterListComp({
-              chapter,
-              setSelectedChapter,
-            }),
-          )}
-        {selectedChapter && (
-          <ScrollView
+      <View>
+        {loading ? (
+          <View
             style={{
               flex: 1,
-            }}
-            contentContainerStyle={{
-              paddingTop: 20,
-              paddingHorizontal: 20,
-              alignItems: 'center',
               width: SIZES.width,
-              paddingBottom: 100,
+              height: SIZES.height / 1.55,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            <View
-              style={{
-                width: 364,
-                height: 205,
-                backgroundColor: 'black',
-                marginBottom: 10,
-              }}>
-              {/*<WebView*/}
-              {/*    */}
-              {/*  allowsInlineMediaPlayback={"true"}*/}
-              {/*  source={{*/}
-              {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
-              {/*  }}*/}
-              {/*/>*/}
-              {!isLoaded && (
+            <ActivityIndicator size={'large'} color={COLORS.blue} />
+          </View>
+        ) : (
+          <View
+            style={{
+              width: SIZES.width,
+              flex: 1,
+            }}>
+            {/*{purchasedLessons &&*/}
+            {/*  !selectedPurchase &&*/}
+            {/*  !selectedLesson &&*/}
+            {/*  purchasedLessons.map((lesson) => {*/}
+            {/*    return lessonListComp({*/}
+            {/*      lesson,*/}
+            {/*      setSelectedLesson: setSelectedPurchase,*/}
+            {/*      setUnitList,*/}
+            {/*    });*/}
+            {/*  })}*/}
+            {/*{!selectedPurchase && (*/}
+            {/*  <PurchasedList*/}
+            {/*    data={purchasedLessons}*/}
+            {/*    setUnitList={setLessons}*/}
+            {/*    setSelectedLesson={setSelectedPurchase}*/}
+            {/*  />*/}
+            {/*)}*/}
+            {!selectedLesson && (
+              <ScrollView
+                style={{
+                  flex: 1,
+                }}
+                contentContainerStyle={{
+                  paddingBottom: 160,
+                }}>
+                <PurchasedList
+                  data={groupedLessons}
+                  setUnitList={setUnitList}
+                  setSelectedLesson={setSelectedLesson}
+                />
+              </ScrollView>
+            )}
+
+            {selectedLesson && !selectedUnit && (
+              <UnitList
+                data={unitList}
+                setSelectedUnit={setSelectedUnit}
+                setChapterList={setChapterList}
+              />
+            )}
+            {selectedUnit && !selectedChapter && (
+              <ChapterList data={chapterList} setSelectedChapter={setSelectedChapter} />
+            )}
+            {selectedChapter && (
+              <View
+                style={{
+                  flex: 1,
+                  paddingTop: 20,
+                  width: SIZES.width,
+                }}>
                 <View
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: isTablet() ? SIZES.width * 0.9 : 364,
+                    height: isTablet() ? SIZES.height * 0.3 : 205,
                     backgroundColor: 'black',
-                    position: 'absolute',
-                    zIndex: 1,
-                    justifyContent: 'center',
+                    marginBottom: 10,
+                    alignSelf: 'center',
                   }}>
-                  <ActivityIndicator color={'white'} />
-                </View>
-              )}
-              <Video
-                onError={error => console.log('error', error)}
-                onLoad={() => setIsLoaded(true)}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-                resizeMode={ResizeMode.CONTAIN}
-                useNativeControls={true}
-                source={{
-                  uri: vimeoData,
-                }}
-              />
-              {/*<WebView*/}
-              {/*  allowsInlineMediaPlayback={true}*/}
-              {/*  allowsFullscreenVideo={false}*/}
-              {/*  source={{*/}
-              {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
-              {/*  }}*/}
-              {/*  javaScriptEnabled={true}*/}
-              {/*  scrollEnabled={false}*/}
-              {/*  injectedJavaScript={template(*/}
-              {/*    "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
-              {/*  )}*/}
-              {/*  mediaPlaybackRequiresUserAction={false}*/}
-              {/*/>*/}
-            </View>
-            <View
-              style={{
-                width: SIZES.width * 0.9,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
-                flexDirection: 'row',
-                backgroundColor: COLORS.white,
-                justifyContent: 'space-between',
-                marginTop: 10,
-                borderRadius: 8,
-                ...SHADOWS.shadowOne,
-              }}>
-              <View
-                style={{
-                  maxWidth: '55%',
-                }}>
-                <Text style={{ ...H1, fontSize: 16 }}>{selectedChapter.NAME}</Text>
-                <Text style={{ ...H1, fontSize: 16 }}>{/*{selectedChapter.explanation}*/}</Text>
-              </View>
-              <View
-                style={{
-                  alignItems: 'flex-end',
-                }}>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(true)}
-                  style={{
-                    backgroundColor: '#E64848',
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      ...BODY4,
-                      color: COLORS.white,
-                      fontSize: 12,
-                      paddingHorizontal: 10,
-                      paddingVertical: 8,
-                    }}>
-                    Eğitmene Puan Ver
-                  </Text>
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    ...BODY2,
-                    fontSize: 12,
-                    marginTop: 5,
-                  }}>
-                  {selectedChapter.TEACHER}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                width: SIZES.width * 0.85,
-                height: 36,
-
-                backgroundColor: COLORS.primaryDark,
-                marginTop: 24,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 8,
-                ...SHADOWS.shadowOne,
-              }}>
-              <Text
-                style={{
-                  ...BODY4,
-                  fontSize: 12,
-                  color: COLORS.white,
-                }}>
-                Eğitimle İlgili Çözümlü Örnek Sorular
-              </Text>
-            </View>
-            {questions.map((question, index) =>
-              questionListComp({
-                question,
-                index,
-                setSelectedChapter,
-              }),
-            )}
-          </ScrollView>
-        )}
-      </ScrollView>
-      <Modal
-        backdropColor={'#000'}
-        backdropOpacity={0}
-        visible={saveModalVisible}
-        onBackdropPress={() => setSaveModalVisible(false)}
-        animationType="slideInUp"
-        onRequestClose={() => setSaveModalVisible(false)}
-        style={{
-          margin: 0,
-          paddingVertical: 50,
-          flex: 1,
-          height: SIZES.height,
-          width: SIZES.width,
-          zIndex: 22,
-          alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          justifyContent: 'center',
-        }}>
-        <View
-          style={{
-            paddingVertical: 16,
-            paddingTop: 8,
-            borderRadius: 20,
-            backgroundColor: 'white',
-            width: SIZES.width * 0.9,
-            height: SIZES.height * 0.8,
-            shadowOffset: {
-              width: 2,
-              height: 2,
-            },
-            shadowOpacity: 0.5,
-            shadowRadius: 13,
-            elevation: 3,
-            shadowColor: '#fff',
-          }}>
-          <KeyboardAwareScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 10,
-            }}>
-            <View
-              style={{
-                width: '100%',
-                paddingVertical: 8,
-                marginBottom: 2.5,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-              }}>
-              <Text
-                style={{
-                  ...BODY4,
-                  fontSize: 20,
-                  position: 'absolute',
-                  width: '100%',
-                  textAlign: 'center',
-                  color: COLORS.black,
-                }}>
-                Test Oluştur
-              </Text>
-              <TouchableOpacity onPress={() => setSaveModalVisible(false)}>
-                <Icon name={'close'} size={24} />
-              </TouchableOpacity>
-            </View>
-            <Text
-              style={{
-                ...BODY3,
-                alignSelf: 'center',
-                paddingBottom: 10,
-                fontSize: 16,
-              }}>
-              Seçilen Soru Sayısı:{' '}
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: COLORS.blue,
-                }}>
-                {selectedQuestionCodeList.length}
-              </Text>
-            </Text>
-
-            {/*<Text*/}
-            {/*  style={{*/}
-            {/*    ...BODY3,*/}
-            {/*    fontSize: 16,*/}
-            {/*    color: COLORS.darkGray,*/}
-            {/*    textAlign: "center",*/}
-            {/*    marginBottom: 16,*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  Sistemde kayıtlı mail adresinizi giriniz. Bilgileriniz kayıtlı cep*/}
-            {/*  telefonunuza gönderilecektir.*/}
-            {/*</Text>*/}
-            <View style={{ marginVertical: 10 }}>
-              <Text
-                style={{
-                  ...BODY3,
-                  fontSize: 16,
-                  marginBottom: 10,
-                }}>
-                Seçilen Öğrenci Sayısı: {selectedStudents.length}
-              </Text>
-
-              <View
-                style={{
-                  maxHeight: 200,
-                  borderWidth: 1,
-                  borderColor: COLORS.lightGrayTwo,
-                  borderRadius: 8,
-                  padding: 10,
-                }}>
-                <FlashList
-                  estimatedItemSize={50}
-                  data={studentList}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (selectedStudents.includes(item.ID)) {
-                          setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
-                        } else {
-                          setSelectedStudents([...selectedStudents, item.ID]);
-                        }
-                      }}
+                  {/*<WebView*/}
+                  {/*    */}
+                  {/*  allowsInlineMediaPlayback={"true"}*/}
+                  {/*  source={{*/}
+                  {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+                  {/*  }}*/}
+                  {/*/>*/}
+                  {!isLoaded && (
+                    <View
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingVertical: 8,
-                        borderBottomWidth: 1,
-                        borderBottomColor: COLORS.lightGrayTwo,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'black',
+                        position: 'absolute',
+                        zIndex: 1,
+                        justifyContent: 'center',
                       }}>
-                      <CheckBox
-                        checked={selectedStudents.includes(item.ID)}
-                        onPress={() => {
-                          if (selectedStudents.includes(item.ID)) {
-                            setSelectedStudents(selectedStudents.filter(id => id !== item.ID));
-                          } else {
-                            setSelectedStudents([...selectedStudents, item.ID]);
-                          }
-                        }}
-                        containerStyle={{
-                          padding: 0,
-                          margin: 0,
-                        }}
-                      />
+                      <ActivityIndicator color={'white'} />
+                    </View>
+                  )}
+
+                  <Video
+                    ref={videoRef}
+                    onPlaybackStatusUpdate={value => {
+                      if (value.isPlaying) {
+                        setIsVideoPlaying(true);
+                      } else {
+                        setIsVideoPlaying(false);
+                      }
+                    }}
+                    shouldPlay={false}
+                    onFullscreenUpdate={onFullscreenUpdate}
+                    onError={error => console.log('error', error)}
+                    onLoad={() => setIsLoaded(true)}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    resizeMode={ResizeMode.CONTAIN}
+                    useNativeControls={true}
+                    source={{
+                      uri: vimeoData,
+                    }}
+                  />
+                  {/*<WebView*/}
+                  {/*  allowsInlineMediaPlayback={true}*/}
+                  {/*  allowsFullscreenVideo={false}*/}
+                  {/*  source={{*/}
+                  {/*    uri: "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+                  {/*  }}*/}
+                  {/*  javaScriptEnabled={true}*/}
+                  {/*  scrollEnabled={false}*/}
+                  {/*  injectedJavaScript={template(*/}
+                  {/*    "https://player.vimeo.com/progressive_redirect/playback/855338150/rendition/360p/file.mp4?loc=external&oauth2_token_id=1643122405&signature=79787c514e2175b899852c9e27cca41c2e47c278696e6fa052c06572b0750b55",*/}
+                  {/*  )}*/}
+                  {/*  mediaPlaybackRequiresUserAction={false}*/}
+                  {/*/>*/}
+                </View>
+                <View
+                  style={{
+                    width: SIZES.width * 0.9,
+                    paddingHorizontal: 10,
+                    paddingVertical: 10,
+                    flexDirection: 'row',
+                    backgroundColor: COLORS.white,
+                    justifyContent: 'space-between',
+                    marginTop: 10,
+                    borderRadius: 8,
+                    alignSelf: 'center',
+                    ...SHADOWS.shadowOne,
+                  }}>
+                  <View
+                    style={{
+                      maxWidth: '55%',
+                    }}>
+                    <Text style={{ ...H1, fontSize: 16 }}>{selectedChapter.NAME}</Text>
+                    <Text style={{ ...H1, fontSize: 16 }}>{/*{selectedChapter.explanation}*/}</Text>
+                  </View>
+                  <View
+                    style={{
+                      alignItems: 'flex-end',
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => setModalVisible(true)}
+                      style={{
+                        backgroundColor: '#E64848',
+                        borderRadius: 8,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
                       <Text
                         style={{
                           ...BODY4,
-                          marginLeft: 10,
-                          color: COLORS.black,
+                          color: COLORS.white,
+                          fontSize: 12,
+                          paddingHorizontal: 10,
+                          paddingVertical: 8,
                         }}>
-                        {item.NAME} {item.LASTNAME}
+                        Eğitmene Puan Ver
                       </Text>
                     </TouchableOpacity>
-                  )}
-                />
-              </View>
-            </View>
-
-            {textInput({
-              placeholder: 'Exam Adı',
-              value: name,
-              onChangeText: text => {
-                setName(text);
-              },
-              label: 'Ödev Adı',
-            })}
-            {textInput({
-              placeholder: 'Exam Açıklaması',
-              value: description,
-              onChangeText: text => {
-                setDescription(text);
-              },
-              label: 'Ödev Açıklaması',
-            })}
-            <View
-              style={{
-                alignSelf: 'center',
-                paddingTop: 10,
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text
+                    <Text
+                      style={{
+                        ...BODY2,
+                        fontSize: 12,
+                        marginTop: 5,
+                      }}>
+                      {selectedChapter.TEACHER}
+                    </Text>
+                  </View>
+                </View>
+                <View
                   style={{
-                    ...FONTS.BODY4,
-                    fontSize: 16,
-                    color: COLORS.black,
-                    marginRight: 10,
+                    width: SIZES.width * 0.85,
+                    flexDirection: 'row',
+                    alignSelf: 'center',
+                    justifyContent: 'space-between',
                   }}>
-                  Tümünü Seç
-                </Text>
-                <Switch
-                  color={COLORS.blue}
-                  value={selectedStudents.length === studentList.length}
-                  onValueChange={() => {
-                    if (selectedStudents.length === studentList.length) {
-                      // Deselect all
-                      setSelectedStudents([]);
-                    } else {
-                      // Select all
-                      setSelectedStudents(studentList.map(student => student.ID));
-                    }
-                  }}
-                />
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedTab(1);
+                    }}
+                    style={{
+                      width: (SIZES.width * 0.85) / 2 - 10,
+                      height: 36,
+
+                      backgroundColor: selectedTab === 1 ? COLORS.primaryDark : COLORS.white,
+                      marginTop: 16,
+                      marginBottom: 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      ...SHADOWS.shadowOne,
+                    }}>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        fontSize: 12,
+                        color: selectedTab === 1 ? COLORS.white : COLORS.black,
+                      }}>
+                      Bölümler
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedTab(0);
+                    }}
+                    style={{
+                      width: (SIZES.width * 0.85) / 2 - 10,
+                      height: 36,
+                      backgroundColor: selectedTab === 0 ? COLORS.primaryDark : COLORS.white,
+                      marginTop: 16,
+                      marginBottom: 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      ...SHADOWS.shadowOne,
+                    }}>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        fontSize: 12,
+                        color: selectedTab === 0 ? COLORS.white : COLORS.black,
+                      }}>
+                      Örnek Sorular
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {selectedTab === 0 ? (
+                  <ScrollView
+                    contentContainerStyle={{
+                      alignItems: 'center',
+                      paddingBottom: 120,
+                    }}>
+                    {questions?.map((question, index) =>
+                      questionListComp({
+                        question,
+                        index,
+                        setSelectedChapter,
+                        setQuestionModalVisible,
+                        setSelectedQuestion,
+                        setQuestionModalType,
+                      }),
+                    )}
+                  </ScrollView>
+                ) : (
+                  <ChapterList data={chapterList} setSelectedChapter={setSelectedChapter} />
+                )}
+                {questions.length === 0 && (
+                  <View>
+                    <Text
+                      style={{
+                        ...BODY4,
+                        color: COLORS.black,
+                      }}>
+                      Soru Bulunamadı
+                    </Text>
+                  </View>
+                )}
               </View>
-              {mainButton({
-                text: 'Kaydet',
-                backgroundColor: '#445286',
-                onPress: () => {
-                  console.log(
-                    selectedQuestionCodeList.length,
-                    name.length,
-                    selectedStudents.length,
-                    'LENGTH',
-                  );
-                  if (selectedQuestionCodeList.length > 0 && selectedStudents.length > 0) {
-                    setSavingTest(true); // Show loading
-                    defApiFunc('setUserExam', {
-                      token: token,
-                      examtype: 2,
-                      m_name: name,
-                      m_description: description,
-                      questions: selectedQuestionCodeList.join(','),
-                      start: '02.10.2025',
-                      expire: '07.12.2025',
-                      users: selectedStudents.join(','),
-                    })
-                      .then(res => {
-                        setSavingTest(false); // Hide loading
-                        if (res.data[0].DATA) {
-                          setSaveModalVisible(false);
-                          setShowStudentModal(false);
-                          setSelectedStudents([]);
-                          Alert.alert('Test oluşturuldu.');
-                        } else {
-                          Alert.alert(res.data[0].MESSAGE);
-                        }
-                      })
-                      .catch(err => {
-                        setSavingTest(false); // Hide loading on error
-                        console.log(err.data);
-                        Alert.alert('Hata', 'Test oluşturulurken bir hata oluştu.');
-                      });
-                  } else {
-                    Alert.alert('Lütfen tüm alanları doldurunuz ve en az bir öğrenci seçiniz.');
-                  }
-                },
-              })}
-            </View>
-          </KeyboardAwareScrollView>
-        </View>
-      </Modal>
-      {reviewTeacherModal({
-        isVisible: modalVisible,
-        setIsVisible: setModalVisible,
-      })}
+            )}
+          </View>
+        )}
+      </View>
+      <ReviewTeacherModal
+        isVisible={modalVisible}
+        setIsVisible={setModalVisible}
+        selectedChapter={selectedChapter}
+        token={token}
+      />
+      {/*{reviewTeacherModal({*/}
+      {/*  isVisible: modalVisible,*/}
+      {/*  setIsVisible: setModalVisible,*/}
+      {/*  selectedChapter,*/}
+      {/*  token,*/}
+      {/*})}*/}
+      <QuestionModal
+        onFullscreenUpdate={onFullscreenUpdate}
+        token={token}
+        isVisible={questionModalVisible}
+        setIsVisible={setQuestionModalVisible}
+        selectedQuestion={selectedQuestion}
+        questionModalType={questionModalType}
+        setQuestionModalType={setQuestionModalType}
+        userInfo={userInfo}
+        innerRef={questionVideoRef}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          Linking.openURL('https://osinif.com');
+        }}
+        style={{
+          backgroundColor: COLORS.primaryDark,
+          borderRadius: 100,
+          position: 'absolute',
+          width: 60,
+          height: 60,
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999,
+          bottom: 90,
+          right: 20,
+        }}>
+        <Text
+          style={{
+            ...FONTS.BODY1,
+            color: COLORS.white,
+            fontSize: 12,
+          }}>
+          Satın Al
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

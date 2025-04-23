@@ -1,168 +1,442 @@
-import { View, Text, ScrollView } from "react-native";
-import { COLORS, FONTS, SIZES } from "../../constants/theme";
-import Accordion from "react-native-collapsible/Accordion";
-import faqAccordion from "../../components/accordion/faqAccordion";
-import DrawerScreensTitle from "../../components/drawer/drawerScreensTitle";
+import { View, Text, ScrollView } from 'react-native';
+import { COLORS, FONTS, SIZES } from '../../constants/theme';
+import Accordion from 'react-native-collapsible/Accordion';
+import faqAccordion from '../../components/accordion/faqAccordion';
+import DrawerScreensTitle from '../../components/drawer/drawerScreensTitle';
 
 const LegalInfoScreen = () => {
   const SECTIONS = [
     {
-      title: "Mesafeli Satış Sözleşmesi",
+      title: 'Kullanıcı Aydınlatma Metni',
       content:
-        "                Mesafeli Satış Sözleşmesi\n" +
-        "Önemli:\n" +
-        "Bu hizmeti ilk defa kullanmadan önce Mesafeli Satış Sözleşmesi'nin tamamını dikkatle okuyunuz.\n" +
-        " \n" +
-        "Kullanıcı, Sözleşme konusu Dijital Hizmet'in ilk kullanımından veya çalıştırmasından itibaren işbu Sözleşmede geçen anlaşma koşullarıyla bağlı olduğunu, bu koşulları başka bir ihbara gerek kalmadan okumuş ve kabul etmiş sayılır. İşbu hükümleri kabul etmemesi halinde Kullanıcı, sözleşme konusu hizmetlerden yararlanamaz, dijital içerikleri izleyemez, dersleri takip edemez ve Dijital Hizmet'i kullanamaz. Bu koşullar dışındaki kullanım halleri Vertex Bilişim telif haklarının ihlali olarak nitelendirilecektir. İşbu sözleşme hükümlerinin Kullanıcı tarafından kabul edilmemesi durumunda sözleşme konusu Dijital Hizmet'i satın almamak, Dijital Hizmet'in satın alınmış olması halinde kullanmaya devam etmemek Kullanıcı’ nın sorumluluğundadır. Doping Bilişim, sözleşmeye konu Dijital Hizmet'in kullanımına başlandıktan sonra işbu Sözleşme hükümlerinin kabul edilmemesi sebebi ile hiçbir sorumluluk kabul etmez. Söz konusu Mesafeli Satış Sözleşmesi hükümleri, Dijital Hizmet'in bilgisayar, tablet veya telefonda kullanılmasına bakılmaksızın bütün versiyonlarında geçerlidir.\n" +
-        "Sözleşme konusu Dijital Hizmetle ilgili tüm fikri ve sınai haklar Vertex Bilişim Teknolojileri A.Ş. ye aittir. Vertex Bilişim, ………….com’ da yer alan herhangi bir dijital içeriğin izinsiz olarak kullanılması, çoğaltılması, yayılması, satışa sunulması ve benzeri durumlarda ilgili kişi veya kişiler hakkında hukuki ve cezai yaptırımlara başvurulacaktır.\n" +
-        " \n" +
-        "1. KONU\n" +
-        "İşbu Sözleşme'nin konusu; Alıcı' nın, Vetex  Bilişim’ e ait www………….com web sitesinden elektronik ortamda satın aldığı, işbu Sözleşme' de ve Ön Bilgilendirme Formu’ nda bahsi geçen nitelikleri taşıyan, madde 3.'te belirtilen Dijital Hizmet’in satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince tarafların hak ve yükümlülüklerinin saptanmasıdır.\n" +
-        "İşbu Sözleşme kapsamında Kullanıcı’ ya sunulan Dijital Hizmet, seçmiş olduğu Dijital Hizmet içeriğinde yer alan kayıtlı içeriklerdir.\n" +
-        "Alıcı, satışa konu Dijital Hizmet’in temel nitelikleri, satış fiyatı, ödeme şekli gibi Dijital Hizmet ile ilgili tüm ön bilgiler konusunda bilgi sahibi olduğunu, bu ön bilgileri elektronik ortamda onayladığını ve sonrasında elektronik ortamda Dijital Hizmet’i satın aldığını işbu Sözleşme hükümlerince kabul ve beyan eder. Ön Bilgilendirme Formu ve Alıcı adına gönderilecek Dijital Hizmet’in bedelini içerir fatura işbu Sözleşme’nin ayrılmaz parçasıdır.\n" +
-        " \n" +
-        "2. TARAFLAR VE TANIMLAR\n" +
-        "2.1. Vertex Bilişim\n" +
-        "Unvanı : VERTEX YAZILIM ELEKTRONİK BİLİŞİM İTHALAT İHRACAT SANAYİ VE TİCARET A.Ş.\n" +
-        "MERSİS No: ………….\n" +
-        "Adres : Muradiye Mah. Celal Bayar Üniversitesi Kampüsü Küme Evler Teknokent No:22 Yunusemre/MANİSA\n" +
-        "Telefon (Müşteri Hizmetleri) : 0 236\n" +
-        "E-mail : info@.............com\n" +
-        "Kep : ………….@hs01.kep.tr\n" +
-        "Web : www…………..com\n" +
-        "2.2. Alıcı\n" +
-        "Adı Soyadı: ……….\n" +
-        "Adres: ……………..\n" +
-        "Telefon: ……………\n" +
-        "E-mail: …………….\n" +
-        "2.3. Kullanıcı\n" +
-        "Alıcı ya da Alıcı’ nın Kullanıcı olarak bildirmiş olduğu kimse, İşbu Sözleşme konusu Dijital Hizmet'i kullanan kişidir. Kullanıcı’ nın sınırlı ehliyetsiz (ergin olmayan çocuk) olması halinde; Mesafeli Satış Sözleşmesi’nin onaylanması ile Kullanıcı velisinin/vasisinin, Kullanıcı’ nın işbu Sözleşme’ nin tarafı haline gelmesine icazet verdiği kabul edilir.\n" +
-        "Kullanıcı, işbu sözleşmenin kurulması esnasında vermiş olduğu bilgilerin eksiksiz ve doğru olduğunu ve sözleşmeye konu olan Dijital Hizmet'i hukuka aykırı bir amaçla kullanmayacağını kabul ve taahhüt eder.\n" +
-        " \n" +
-        "3. DİJİTAL HİZMET BİLGİLERİ VE ÜCRETİ\n" +
-        "3.1. Alıcı, işbu Mesafeli Satış Sözleşmesi’nde (“Sözleşme”) ve Ön Bilgilendirme Formu’ nda özellikleri aşağıda detaylı olarak belirtilen özgün ve kayıtlı dijital içerik , hizmetlerini içermektedir. Hizmet Bedeli, tüm vergileri kapsar.\n" +
-        " \n" +
-        "Paket Adı\n" +
-        "Paket İçeriği\n" +
-        "Toplam Tutar\n" +
-        "…..\n" +
-        "…..\n" +
-        "….. TL\n" +
-        " \n" +
-        "3.2. Satın alınan Dijital Hizmet’in diğer özellikleri ve kullanım koşulları ………….com web sitesinde yer alan bilgilerde ve işbu Sözleşme'nin ayrılmaz parçası sayılan Ön Bilgilendirme Formu’ nda ve detaylı olarak belirtilmiştir.\n" +
-        " \n" +
-        "4. DİJİTAL HİZMET KULLANIM (LİSANS) SÜRESİ\n" +
-        "4.1. Dijital Hizmet kullanım süresi Alıcı tarafından satın alma işleminin gerçekleştiği tarihten itibaren  Dijital Hizmet bakımından ………….com internet sitesinde, Dijital Hizmet detaylarında öngörülen tarihe kadar geçen süre boyunca (YKS, LGS, KPSS, DGS, ALES paketleri ve bunlara dahil olan Hızlı Okuma Teknikleri paketi ilgili olduğu sınav tarihine kadar; ara sınıflar için olan paketler ilgili akademik yıl boyunca; Hızlı Okuma 60 gün boyunca, tekli İngilizce paketleri, ……..paketleri 180 gün boyunca ve……… paketi satın alma tarihinden itibaren 1 yıl boyunca) Kullanıcı’ nın erişimine online platformda açılır.\n" +
-        "4.2. Paket içeriğine dahil olması halinde; Çözücü kredi ve Koçum Yanımda görüşme ve mesaj hakkı süreleri Dijital Hizmet süresince devam eder. Vertex Bilişimin Dijital Hizmet'inin sona erdiği gün, içerik dahilindeki Uygulama kredi ve/veya haklar, kullanılmamış olsa dahi silinir. Uygulama marketlerinden satın alınan paketlerle ilgili süreler paket içeriğinde belirtildiği gibidir.\n" +
-        " \n" +
-        "5. CAYMA HAKKI\n" +
-        "5.1. İşbu Sözleşme konusu Dijital Hizmet, online ve kayıtlı dijital içeriktir. Bu bakımdan, 6502 sayılı Tüketicinin Korunması Hakkında Kanun’ a dayanarak hazırlanan Mesafeli Sözleşmeler Yönetmeliği’nin 15/ğ Maddesi uyarınca “elektronik ortamda anında ifa edilen hizmetler veya tüketiciye anında teslim edilen gayrimaddi mallara ilişkin sözleşmeler” kapsamında kalması sebebiyle Alıcı’ nın cayma hakkı bulunmamaktadır.\n" +
-        " \n" +
-        "6. ÖDEME YÖNTEMLERİ\n" +
-        "6.1. Ödeme, aşağıda belirtilen yöntemlerden biri ile yapılabilecektir:\n" +
-        "Kredi Kartı ile Ödeme: www………...com web sayfasında satın alınmak istenen Dijital Hizmet’ in ödeme bilgileri aşamasında yer alan yönergelerin izlenerek kredi kartı kullanmak sureti ile belirli bankalarla anlaşmalı olarak, taksit seçenekleriyle yapılan ödeme yöntemidir. Bu ödeme yönteminin seçilmesi halinde, Hizmet Bedeli, yetkili elektronik ödeme sağlayıcı kuruluş tarafından tahsil edilmektedir. Taksitle ödeme yönteminin seçilmesi halinde, ödeme peşin fiyat üzerinden gerçekleşir, ödeme sağlayıcı kuruluştan kaynaklı vade farkı Alıcı’ ya yansıtılmaz.\n" +
-        "Havale/Eft Yolu ile Ödeme: Ödeme,Vertex  Bilişim’ in www……...com web sayfasında satın alınmak istenen Dijital Hizmet’ in “Havale/EFT ile Ödemek İçin” ödeme yönteminin seçilerek satın almanın devam ettirilmesidir. Ödeme işlemini tamamlamak için belirttiğiniz e-mail adresinize gönderilen banka hesap numaralarımızdan birine 5 gün içerisinde ödeme yapmanız gerekmektedir. Havale/EFT yolu ile ödeme sırasında ödeme açıklamasına, “Havale/EFT ile Ödemek İçin” butonunu tıkladığınızda size özel oluşturulan referans numarasını yazmanız gereklidir. Bu ödeme yönteminin seçilmesi halinde, ödeme sağlayıcı kuruluşlar tarafından ilgili ödeme için havale veya EFT masrafları Alıcı’ ya yansıtılabilir. Böyle bir durumda, Vertex Bilişim’ in ilgili havale veya EFT masraflarından sorumluluğu yoktur\n" +
-        "İyzico ile Ödeme: Ödeme, Vertex Bilişim’in www………..com web sayfasında satın alınmak istenen Dijital Hizmet’ in “iyzico ile Ödeme İçin” ödeme yönteminin seçilerek satın almanın devam ettirilmesidir. Alıcı, Onayla ve Devam Et butonunun tıklanmasının ardından iyzico Güvenli Ödeme sayfasına yönlendirilerek ödemesini gerçekleştirir.\n" +
-        "6.2.Ödeme sırasında Alıcı tarafından yapılabilecek hatalar nedeni ile ödemede çıkabilecek aksaklıklardan Vertex Bilişim sorumlu değildir.\n" +
-        "6.3. İnternet üzerinden kredi kartı ile yapılan ödemelerin bedelleri Alıcının kredi kartından otomatik olarak çekilir. Ödeme işlemi onaylandıktan sonra içerikler kullanıma açılır. Alıcı Havale/Eft ile ödemeyi gerçekleştirdiğinde, Dijital Hizmet ücretinin hesaba geçmesinin ardından 24 saat içerisinde Dijital Hizmet, Kullanıcı’ nın erişimine online açılır. Vertex Bilişim https://www..............com internet sitesi indirim veya artırım ücret uygulamasını döneme göre değiştirme hakkına sahiptir.\n" +
-        " \n" +
-        "7. GENEL HÜKÜMLER\n" +
-        "7.1. İşbu Sözleşme Alıcı ve Vertex  Bilişim arasında; Alıcı tarafından Ön Bilgilendirme Formu’ nun okunduğunun ve teyit edildiğinin; İşbu Mesafeli Satış Sözleşmesi’ nin okunduğunun ve kabul edildiğinin beyan edildiği an internet üzerinden akdedilmiş olup, bu andan itibaren hüküm ve sonuçlarını doğurur. Sözleşme'nin bir nüshası Alıcı’ nın belirttiği e-mail adresine gönderilir.\n" +
-        "7.2. Alıcı, satın aldığı Dijital Hizmet ile ilgili; Ön Bilgilendirme Formu’ nu ve Mesafeli Satış Sözleşmesi’ni onaylamasını ve Dijital Hizmet bedeline ilişkin ödemeyi gerçekleştirmesini müteakip başka bir işleme gerek kalmaksızın satış tamamlanır. Anılan onay işlemleri, Dijital Hizmet’ in kullanım kapsam ve şartlarını kabul anlamına gelir. Bu suretle Dijital Hizmet, belirli süre boyunca ve işbu Sözleşme’ de yer alan koşullarla Kullanıcı’ nın erişimine, online olarak açılır.\n" +
-        "7.3. Dijital Hizmet yalnızca bir bilgisayar ve bir telefonda veya bir tablet ve bir telefonda kullanılabilir. Tablet ve bilgisayarda birlikte kurulum yapılamamaktadır. Hızlı Okuma paketi ise yalnızca bilgisayarda kullanılabilmektedir. Dijital Hizmet'in kullanıldığı cihazlardan herhangi birinin sıfırlanması veya değiştirilmesi durumlarında, her cihaz için en fazla 3 defa değişiklik yapılabilmektedir. Vertex Bilişim, bu durumdan kaynaklanabilecek olası zararlardan sorumlu olmaz.\n" +
-        "7.4. Dijital Hizmet’e ek olarak soru sorma hakkı, ……………………….. uygulamalarına üyelik işlemi otomatik olarak tamamlanır. Kullanıcı bu bakımdan, https://kocumyanimda.com/, https://simdianladim.com/, https://cozucu.app/ yer alan “Kullanıcı Üyelik Sözleşmesi” lerini onaylamış kabul edilir.\n" +
-        "7.5. Alıcı, Kullanıcı’ ya ait bilgileri tam ve eksiksiz şekilde girmekle yükümlü olup, Alıcı’ nın eksik veya hatalı şekilde bilgi vermesi halinde Dijital Hizmet’in kullanıma açılamaması durumunda Vertex Bilişim’ in sorumluluğu bulunmamaktadır. Alıcı, işbu Sözleşme’nin kurulması esnasında Vertex Bilişim tarafından Kullanıcı’ ya ait kişisel verilerin işlenmesine ilişkin gerekli bilgilerin temin edildiğini, bu kapsamda Vertex Bilişim ile paylaştığı Kullanıcı’ ya ait kişisel verileri paylaşmaya yetkili olduğunu, Kullanıcı’ ya yönelik KVKK kapsamında gerekli aydınlatma yükümlülüğünü yerine getirdiğini (gereği halinde açık rızasını aldığını), bu sebeple her türlü sorumluluğun kendisinde olduğunu kabul eder.\n" +
-        "7.6. Satın alınan Dijital Hizmet’ in özelliğine göre, Ön Bilgilendirme Formunda ayrıntıları, süresi ve şekli belirlendiği üzere, taahhüt edilen edimler Vertex Bilişim tarafından işbu Sözleşmeye ve Ön Bilgilendirme Formuna uygun olarak ifa edilir.\n" +
-        "7.7. Satın alınan Dijital Hizmet programı, satış ve kullanımı 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği (RG:27.11.2014/29188) hükümleri ile ilgili mevzuat hükümlerine tabidir.\n" +
-        "7.8. Satın alınan her bir Dijital Hizmet programı Sözleşmede belirtilen sürede, her halde 30 günlük yasal süreyi aşmamak kaydı ile Kullanıcı’ nın kullanımına açılır. Bu süre içinde Dijital Hizmet programı kullanıma açılmaz ise, Kullanıcı sözleşmeyi sona erdirebilir.\n" +
-        "7.9. Alıcı, satın aldığı Dijital Hizmet programının bedelini ödemez veya banka kayıtlarında iptal ederse, Vertex Bilişim’ in Dijital Hizmet programını içeren dijital içeriği Kullanıcı’ nın kullanımına açma yükümlülüğü sona erer.\n" +
-        "7.10. Dijital Hizmet programını içeren dijital içerik Kullanıcı kullanımına açıldıktan sonra, Alıcı’ nın ödeme yaptığı kredi kartının yetkisiz kişiler tarafından haksız olarak kullanıldığı tespit edilirse ve satılan program bedeli ilgili banka veya finans kuruluşu tarafından Vertex Bilişim' e ödenmez ise, Vertex Bilişim sözleşmeyi sona erdirir.\n" +
-        "7.11. Vertex Bilişim’ in öngöremeyeceği mücbir sebepler oluşursa ve Dijital Hizmet programı süresinde kullanıma açılmaz ise, durum Alıcı’ya bildirilir. Alıcı, siparişin iptalini veya engel ortadan kalkana dek dijital içeriğin kullanıma açılmasının ertelenmesini talep edebilir. Alıcı siparişi iptal ederse; ödemeyi havale/eft ile yapmış ise iptalinden itibaren iade ödemesi 10 gün içerisinde gerçekleştirilir. Alıcı, ödemeyi kredi kartı ile ya da iyzico ödeme yöntemi ile yapmış ise ve iptal ederse, bu iptalden itibaren yine 10 gün içinde Dijital Hizmet bedeli bankaya iade edilir. Ancak Alıcı, ilgili bankanın para iadesini hesabına 2-3 haftalık bir sürede yapabileceğini kabul eder ve Vertex Bilişim’ in bundan doğan bir sorumluluğu olmadığını bilir.\n" +
-        " \n" +
-        "8. KULLANICI’ NIN DİJİTAL HİZMET’İ KULLANIM KAPSAMI, YÜKÜMLÜLÜKLERİ VE BEYANLARI\n" +
-        "Alıcı/Kullanıcı, madde 3’ te belirtilen Dijital Hizmet’i satın almadan önce Dijital Hizmet ile ilgili tüm ön bilgileri okuduğunu, anladığını, teyit ve kabul ettiğini internet ortamında onaylamakla beyan etmiş sayılır. Alıcı/Kullanıcı, söz konusu Dijital Hizmet’i satın alarak Ön Bilgilendirme Formunda ve belirtilen sınırlar ve şartlar kapsamında kullanım ve faydalanma hakkını elde etmiştir.\n" +
-        "8.1. Kullanıcı’ nın Beyanları\n" +
-        "Dijital Hizmet, internet erişimi gerektirir. Söz konusu internet bağlantısının sağlanması, kalitesi ve güvenliği Kullanıcı’ nın sorumluluğundadır. Kullanıcı, Dijital Hizmet'in kullanılmasıyla ilgili olarak elektronik cihazından/cihazlarının donanımsal eksikliklerinden; internet kalitesi ya da erişiminden kaynaklanan sorunlardan Vertex Bilişim’ in hiçbir koşul altında sorumlu olmayacağını kabul ve beyan eder.\n" +
-        "İşbu Sözleşmeye konu Dijital Hizmet, internet erişimi gerektirir. Söz konusu Dijital Hizmet'in kullanılabilmesi bakımından internet bağlantısının sağlanması, kalitesi ve güvenliği Kullanıcı’ nın sorumluluğunda olup bu sorumluluk hiçbir koşul altında Vertex Bilişim’ e yüklenemez. Kullanıcı, Dijital Hizmet'in kullanılması ile ilgili olarak elektronik cihazından/cihazlarından, her türlü donanımsal eksiklikten, internet kalitesi ve erişiminden kaynaklanan sorunlardan Vertex Bilişim’in hiçbir şekilde sorumlu olmayacağını kabul ve beyan eder.\n" +
-        "Kullanıcı, Vertex Bilişim’in uzman, soru birimi ve teknik destek çalışanları dahil herhangi bir çalışanına genel ahlaka ve kamu düzenine aykırı, uygunsuz, onur kırıcı yorum, paylaşım, söz ve/veya davranışlarda bulunması halinde; Dijital Hizmet'in kullanımının Vertex Bilişim tarafından tek taraflı olarak sonlandırılabileceğini, sistem dışına çıkarılabileceğini kabul ve beyan eder.\n" +
-        "Kullanıcı, Dijital Hizmet'i kullanırken gerçekleştirdiği tüm eylemlerden sorumlu olduğunu kabul ve beyan eder.\n" +
-        "8.2. Kullanıcı’ nın Yükümlülükleri\n" +
-        "Kullanıcı, şifre ve Kullanıcı adının gizli kalması için gerekli dikkat ve özeni göstereceğini, şifreyi ve Kullanıcı adını herhangi bir üçüncü şahsa açıklamayacağını, Dijital Hizmet'i herhangi bir üçüncü şahsa kullandırmayacağını, şifresinin yetkisiz üçüncü şahıslar tarafından ele geçirildiğini öğrenmesi veya bundan şüphelenmesi halinde derhal Vertex Bilişim’ e haber vereceğini kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, sözleşmeye konu Dijital Hizmet'i işbu Mesafeli Satış Sözleşmesi’ nde yer alan hükümlere uygun olarak kullanacağını kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, Dijital Hizmet'in yalnızca şahsı tarafından kullanılacağını, Dijital Hizmet'i üçüncü bir şahsa kiralamayacağını, satışını yapmayacağını kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, satın alma esnasında vermiş olduğu bilgilerin eksiksiz ve doğru olduğunu ve bu bilgilerde sonradan meydana gelen herhangi bir değişikliği Vertex Bilişim’ e derhal bildireceğini kabul beyan ve taahhüt eder.\n" +
-        "Kullanıcı, Dijital Hizmet'i kullanırken herhangi bir gizlilik ihlali söz konusu olması halinde derhal ve gecikmeksizin Vertex Bilişim’ i bilgilendireceğini kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, deprem, yangın, sel gibi tabii afetler veya savaş, terör eylemleri gibi sebeplerle, ya da internet altyapısı, veri hatları gibi ağ iletişim altyapısına dayalı unsurlarda meydana gelebilecek ve Vertex Bilişim’ in elinde olmayan sebeplerle Dijital Hizmet'in kullanılamaması durumunda Vertex Bilişim’ in herhangi bir sorumluluğunun olmayacağını, herhangi bir nam altında Vertex Bilişim’ den tazminat veya diğer herhangi bir talepte bulunmayacağını kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, almış olduğu ücretli içeriğe sahip içeriği kullanması veya indirmesi sebebiyle sistemine herhangi bir zarar geldiğini, indirilen içerikten dolayı sistemine virüs gibi kötü amaçlı kodların bulaştığını öne sürerek Vertex Bilişim’ den herhangi bir tazminat talebinde veya diğer herhangi bir talepte bulunamaz.\n" +
-        "Kullanıcı, Vertex Bilişim’ in sunduğu Dijital Hizmet'i alması dolayısıyla Vertex Bilişim tarafından elde edilen bilgilerin tamamen kendi rızası ile elde edilmiş olduğunu, Kullanıcı satın aldığı dijital içerikleri görüntüleyebilmesi için gerekli olan yazılımların (örneğin Media Player) lisanslı olduğunu, lisansız yazılımların kullanılmasından oluşabilecek herhangi bir sorundan Vertex Bilişim’ in herhangi bir sorumluluğunun olmadığını kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, sözleşme konusu Dijital Hizmet'i yalnızca bireysel olarak kullanacağını, herhangi bir üçüncü şahsın kullanımına izin vermeyeceğini, her ne şekilde olursa olsun ticari amaçla kullanmayacağını kabul, beyan ve taahhüt eder.\n" +
-        "Kullanıcı, Dijital Hizmet'i kullanırken gerçekleştirdiği tüm eylemlerden sorumlu olduğunu kabul ve beyan eder.\n" +
-        " \n" +
-        "9. VERTEX BİLİŞİM’İN BEYANLARI VE TAAHHÜTLERİ\n" +
-        "9.1. Vetex Bilişim, işbu Sözleşme konusu Dijital Hizmet’in Ön Bilgilendirme Formunda belirtilen niteliklere uygun olmasından sorumludur.Vertex  Bilişim tarafından sağlanan Dijital Hizmet’lere ilişkin dijital içeriklerin Alıcı’ ya ait elektronik cihazlarda çalıştırılması için üçüncü taraflarca sağlanan uygulamalara ilişkin her türlü sorumluluk Kullanıcı’ ya aittir. Vertex Bilişim, doğrudan doğruya Dijital Hizmet’le ilgili olmayan internet bağlantısı, cihaz, teknik ve Kullanıcı kaynaklı sorunlardan hiçbir koşul altında sorumlu tutulamaz. Ayrıca Vertex Bilişim, Dijital Hizmet'in dayandığı yazılımın hatasız ve kesintisiz çalışacağının garantisini vermez.\n" +
-        "9.2. Vertex Bilişim, Ön Bilgilendirme Formunda mevcut mücbir sebepler hariç olmak üzere, işbu Sözleşme ve Ön Bilgilendirme Formu kapsamında satın alınan tarihten Dijital Hizmet bakımından dopinghafiza.com internet sitesinde Dijital Hizmet detaylarında öngörülen tarihe kadar sürekliliğini sağlamakla yükümlüdür. Dijital Hizmet’de yer alan dijital içeriklerin müfredat değişikliği vb. sebeplerden dolayı değiştirilmesi, güncellenmesi ve içeriklerin iyileştirilmesi amaçlarıyla bu süre içerisinde Alıcı’ nın dijital içeriklere erişememesi, sürekliliğin ihlali anlamına gelmeyecektir.\n" +
-        "9.3. Vertex  Bilişim, Dijital Hizmet’in sunumunun Alıcı’ya teslim edilmesinin (ifanın) kendisinden kaynaklanmayan bir sebep ile imkansızlaşması halinde, sözleşmenin ifasının imkansız olduğunu öğrendiği tarihten itibaren 3 (üç) gün içinde Alıcı' ya bildirmekle yükümlü olacaktır. Vertex Bilişim ayrıca söz konusu Dijital Hizmet ile ilgili meydana gelecek değişiklikleri www………….com resmi web sitesinde, SMS vasıtası ile veya belirleyeceği diğer bir yöntem ile tüm Alıcı/Kullanıcı' lara duyurmakla yükümlüdür.\n" +
-        "9.4. Dijital içerikler; yazılım geliştirme, müfredatın güncellenmesi ve benzeri sebeplerle belirli günlerde erişime kapatılabilmektedir. Alıcı/Kullanıcı, dijital içeriklerin Vertex Bilişim’ den kaynaklanmayan sebeplerle kesintiye uğraması ya da performans seviyesinde farklılıklar gözlenmesi halinde Vertex Bilişim’ in bu durumu düzeltmek için gerekli özeni ve çabayı gösterdiğini bilir ve anılan durumlarda Vertex Bilişim’ in tazminat yükümlülüğü bulunmadığını beyan ve kabul ve beyan eder.\n" +
-        "9.5. Vertex Bilişim platformunda, piyasadaki benzer standartlar dahilinde kullanıma engel olmayacak seviyede hata, kusur ya da kesinti oluşabilir.\n" +
-        "9.6. Dijital içeriklerin geliştirilmesi, müfredata uyarlanması ve güncellenmesi gibi sistem ve içerik çalışmalarının, elde olmayan sebeplerle on günden uzun süreli olarak Vertex Bilişim platformunu kesintiye uğratması halinde Vertex Bilişim; Alıcı/Kullanıcı’ ya programın kullanım miktarı kadar bedelden indirim yaparak iadesini gerçekleştirebilir.\n" +
-        "9.7. Vertex Bilişim yalnızca işbu Sözleşme’ de ve Ön Bilgilendirme Formu’ nda bilgileri yer alan Dijital Hizmet’i Alıcı’ ya sağlamakla yükümlü olup, Alıcı/Kullanıcı’ya bir başarı veya kesin bir sonuç taahhüdünde bulunmamaktadır. Dijital Hizmet’in Alıcı/Kullanıcı’ nın subjektif beklentisine uygun olmamasından ve bu sebeplerle ortaya çıkabilecek doğrudan veya dolaylı zararlardan hiçbir şekilde Vertex Bilişim sorumlu değildir.\n" +
-        "9.8. Vertex Bilişim, Dijital Hizmet ile sunulan herhangi bir içerik sonucunda maruz kalınan kayıp veya hasarlardan, veri kaybından veya herhangi bir ses, görüntü, fotoğraf, yazılım, teçhizat veya içerikteki hata, hasar ya da bozulmalardan, Dijital Hizmet’in Alıcı tarafından kullanımı neticesinde oluşacak herhangi bir telif hakkının ve/veya mülkiyet hakkının ihlalinden hiçbir şekilde sorumlu olmayacaktır. Ayrıca, Kullanıcı’nın işbu Sözleşme hükümlerine aykırı eylemleri neticesi meydana gelen zararlardan Vertex Bilişim hiçbir şekilde sorumlu olmayacaktır.\n" +
-        "9.9. Vertex Bilişim, Dijital Hizmet ile sunulan her türlü dijital içerik üzerinde, tamamen kendi takdirinde olmak üzere, değişiklik yapma, makul sınırlar içinde kalmak üzere, gerekli olan içeriği kaldırma ve/veya yeni bir içerik ekleme, içerikleri güncel Dijital Hizmet programlarına uygun hale getirmek amacıyla önceden bildirimde bulunmaksızın güncelleme yapma yetkilerine sahiptir.\n" +
-        " \n" +
-        "10. SÖZLEŞMENİN, SÜRESİ, SONA ERMESİ VE FESHİ\n" +
-        "10.1. İşbu Sözleşme, bu Sözleşme’ nin 4.1. bendinde belirtildiği süre sonunda başka hiçbir işleme gerek olmaksızın, kendiliğinden sona erer.\n" +
-        "10.2. Paket içeriğine dahil olması halinde; Çözücü kredi ve Koçum Yanımda veya Şimdi Anladım görüşme ve mesaj hakkı süreleri, Vertex Bilişim Dijital Hizmet süresince devam eder.Vertex Bilişim Dijital Hizmet’inin sona erdiği gün, içerik dahilindeki Uygulama kredi ve/veya haklar, kullanılmamış olsa dahi silinir. Uygulama marketlerinden satın alınan paketlerle ilgili süreler paket içeriğinde belirtildiği gibidir.\n" +
-        "10.3. Vertex Bilişim, Alıcı/Kullanıcı' nın İşbu Sözleşme'den doğan yükümlülüklerini İşbu Sözleşme’ de, belirtilen şekilde yerine getirmemesi halinde derhal ve bildirimsiz olarak Sözleşme’ yi feshedebilir. Bu halde Alıcı/Kullanıcı, Vertex Bilişim’ den hiçbir bedel talep edemez.\n" +
-        "10.4. Kullanıcı’ nın, Vertex Bilişim’in uzman, soru birimi ve teknik destek çalışanları dahil herhangi bir çalışanına genel ahlaka ve kamu düzenine aykırı, uygunsuz, onur kırıcı yorum, paylaşım, söz ve/veya davranışlarda bulunması halinde; Vertex Bilişim kullanımı ve Sözleşme Vertex Bilişim tarafından tek taraflı olarak ve bildirimde bulunmaksızın sonlandırılabilir.\n" +
-        "10.5. Satın alınan Dijital Hizmet’e ilişkin dijital içeriklerin geliştirilmesi, müfredata uyarlanması ve güncellenmesi gibi sistem ve içerik çalışmalarının, elde olmayan sebeplerle on günden uzun süreli olarak Vertex Bilişim platformunu kesintiye uğratması halinde Vertex Bilişim; Alıcı/Kullanıcı’ ya programın kullanım miktarı kadar bedelden indirim yaparak iade gerçekleştirilebilir ve Sözleşme sonlandırılabilir.\n" +
-        " \n" +
-        "11. LİSANS\n" +
-        "11.1. İşbu Sözleşmeye konu Dijital Hizmet’in satın alınmasıyla Vertex Bilişim’ e ait Eser’in (Dijital Hizmet) münhasır olmayan ve yalnızca kullanım hakkına ilişkin lisansın, Kullanıcı’ya sınırlı ve süreli olarak tevdii söz konusudur.\n" +
-        "11.2. Eser, yürürlükteki her türlü mevzuat ile korunmakta olup, İşbu Sözleşme ile Kullanıcı’ya Eser’den doğan herhangi bir mali ya da manevi hakkın devri yapılmamakta; yalnızca Fikir ve Sanat Eserleri Kanunu kapsamında münhasır olmayan kullanım lisansı, ticari olmayan ve kişisel kullanım için, Dijital Hizmet içeriğinde belirlenen süre boyunca (TYT, AYT, DGS, LGS, ALES, İNGİLİZCE ve KPSS paketleri ve bunlara dahil olan Hızlı Okuma Teknikleri paketi sınav tarihine kadar, ara sınıflar için olan paketler ilgili akademik yıl boyunca, ara sınıflar+ LGS sınav tarihine kadar ve tekli alınan Hızlı Okuma Teknikleri paketi 60 gün boyunca, tekli İngilizce paketleri 180 gün boyunca) tevdi olunmaktadır.\n" +
-        "11.3. Vertex Bilişim, işbu Sözleşme’ nin Kullanıcıya bırakmadığı Eser’ e ilişkin her türlü hakkı, mülkiyeti ve menfaati (bunlarla sınırlı olmamakla birlikte tüm Fikri ve Sınai Mülkiyet Hakları dahil) açıkça saklı tutar.\n" +
-        "11.4. Kullanıcı, İşbu Sözleşme konusu lisanstan doğan, Vertex  Bilişim’ in ve tedarikçilerinin fikri mülkiyet haklarını ihlal ederek; eseri izinsiz kopyalaması, çoğaltması, dağıtması ya da izin gerektirecek şekilde görüntülemesi, bazı çalışmalarda kullanarak türetmesi (türevlerini oluşturması) gibi hallerde, Vertex Bilişim’ e 5.000.000 TL (beşmilyon TL) cezai şartı herhangi bir mahkeme kararına gerek olmaksızın ödemeyi; bu cezai şartın fahiş olmadığını, ihlalin ve kusurun ağırlığına göre Vertex Bilişim’ in bu ceza miktarını artırabileceğini ve mahkemelerden terkini veya tenkisini talep etmeyeceğini peşinen kabul, beyan ve taahhüt eder. Vertex Bilişim, bu ihlalden dolayı uğradığı zararlar nedeniyle, ayrıca, ilgili mevzuat çerçevesinde suç veya ceza öngören hükümlerden doğan ve/veya Borçlar Kanunu, Türk Ticaret Kanunu, Rekabet Hükümleri ve ilgili mevzuat uyarınca tazminat ve/veya tüm dava haklarını saklı tutar.\n" +
-        " \n" +
-        "12. KULLANIM SINIRLARI\n" +
-        "12.1. Kullanıcı, Dijital Hizmet’in yahut Dijital Hizmet’de sunulan içeriğin herhangi bir yazılım bileşenine ilişkin olarak kısmen veya tamamen tersine mühendislik yapamaz, uygunsuz bir erişim elde etme teşebbüsünde bulunamaz, Dijital Hizmet'in bir kısmını ya da tamamını kopyalayamaz, taklit edemez, 2. El dahil olmak üzere satışını yapamaz, sosyal medya ortamlarında ve diğer internet sitelerinde yayınlayamaz ve bu platformlarda satışa sunamaz, Dijital Hizmet’i, Mesafeli Satış Sözleşmesi ve Ön Bilgilendirme Formu’nda yer alan amaçlar haricinde kullanamaz.\n" +
-        "\n",
+        'VERTEX YAZILIM KULLANICI AYDINLATMA METNİ\n' +
+        'Siz kullanıcılarımızın kişisel verilerinin güvenliği sağlamak bizim en önde gelen ilkelerimizdendir. Bu ilkemizden yola çıkarak, Vertex Yazılım Aydınlatma Metni ile size;\n' +
+        '\t•\tVeri Sorumlusu olarak  Vertex Yazılımın kimliği,\n' +
+        '\t•\tKişisel verilerinizin Vertex Yazılım tarafindan hangi amaçla toplandığı (işlendiği)\n' +
+        '\t•\tKişisel verilerinizi kimlere ve hangi amaçla aktarabileceğimizi,\n' +
+        '\t•\tKişisel verilerinizi nasıl edindiğimizi ve bunun yasal nedenlerini,\n' +
+        '\t•\tSon olarak kişisel verilerinizle ilgili olarak haklarınızın neler olduğunu, açıklamak isteriz.\n' +
+        '\n' +
+        '\n' +
+        'Bu bilgileri sizlerle paylaşmadan önce, açıklanması gerekli bazı hususlar şunlardır:\n' +
+        '\t•\tKişisel veri nedir? Gerçek kişinin kimliğinin belirlenmesine yarayan tüm bilgiler kişisel veridir. Örneğin; kişilerin adı, soyadı, telefon numarası, mezuniyet bilgisi kişisel verilerden bazılarıdır.\n' +
+        '\t•\tVeri İşleme faaliyeti nedir? Kişisel verilerin otomatik olan ya da olmayan yollarla, yani bilişim sistemleri üzerinden veya manuel olarak; elde edilmesi, kaydedilmesi, muhafaza edilmesi, aktarılması, sınıflandırılması ya da kullanımının engellenmesi gibi her türlü işlem anlamına gelir. Örneğin, kişisel verilerinizi bizimle Vertex Yazılım dijital ürününü satın almanız sırasında paylaşmanız, bizim tarafimızdan gerçekleştirilen bir veri işleme faaliyetidir.\n' +
+        '\t•\tVeri Sorumlusu Kimdir? Veri işleme faaliyetinin neden ve nasıl olacağını belirleyen gerçek ya da tüzel kişidir. Bu bakımdan, Şirketimiz bir veri sorumlusudur.\n' +
+        '9251051901 Vergi Kimlik numaralı VERTEX YAZILIM ELEKTRONİK BİLİŞİM İTHALAT İHRACAT SANAYİ VE TİCARET A.Ş. ticaret unvanlı şirketimiz, bu metinde kısaca “Vertex Yazılım” olarak ifade edilecektir.\n' +
+        'Vertex Yazılım, faaliyetlerini Muradiye Mah. Celal Bayar Üniversitesi Kampüsü Küme Evleri Tekno Kent Blok No:22 Yunusemre/MANİSA adresinde göstermektedir. Şirketimiz ilgili daha detaylı bilgi için www.vertexyazilim.com.tr adlı internet sitemizin İletişim bölümünü ziyaret edebilirsiniz.\n' +
+        '\n' +
+        'Yukarıdaki açıklamalar ışığında, kişisel verilerinizin işlenmesine ilişkin Aydınlatma Metni kapsamındaki açıklamalarımız aşağıdaki gibidir:\n' +
+        '\t•\tVertex Yazılım Dijital Ürününü Satın Almanız ve Kullanmanız Sırasında Hangi Kişisel Verileriniz İşlenmektedir?\n' +
+        'Kimlik bilgilerinizden; ad, soyad,\n' +
+        'İletişim bilgilerinizden; telefon, şehir bilgisi, e-posta adresi\n' +
+        'Müşteri işlem verilerinizden; çağrı kayıtları, şipariş bilgisi, ödeme şekli ve detayları, fatura, size yönelik oluşturulmuş Vertex Yazılım uzman/danışman notu, çalışma takviminiz,\n' +
+        'İşlem güvenliği verilerinizden; IP adresi, Kullanıcı ID, cihaz bilgileri (kullanılan cihaza ilişkin marka, model, teknik özellik ve işletim sistemi bilgisi) kullanıcı adı ve şifre, hukuki metinleri onay kayıtları, Vertex Yazılım dijital ürününe giriş çıkış bilgileri, log kayıtlarınız, Vertex Yazılım test çözme ve ders izleme istatistiklerinizin bilgisi,\n' +
+        'Finans Bilgilerinizden; banka hesap bilgileri, IBAN no\n' +
+        '\n' +
+        'Pazarlama; Program gezinme süre ve detaylarını içeren veriler, çerez kayıtları, anket cevaplarınız,\n' +
+        'Mesleki deneyim- verilerinizden; mezuniyet durumu, üniversite, bölüm, branş bilgisi, diploma/karne puanı, okul türü bilgisi (ortaokul, lise türü ya da mezun bilgisi), okul adı bilgisi, dershane, etüt merkezi, kursa gidip gitmediğinizin, özel ders alıp almadığınızın bilgisi, hedeflenen okul/bölüm bilgisi, daha önce sınava girilip girilmediği bilgisi,\n' +
+        'Diğer; program içi geri bildirim, puanlama, yorum ve görüş bilgileri, Ürün/Hizmet Kullanım Bilgisi, Talep/Şikayet Yönetimi Bilgisi, Instagram kullanıcı adı bilgisi\n' +
+        '\t•\tVertex Yazılım Dijital Ürününü Satın Almanız ve Kullanmanız Sırasında Kişisel Verilerin İşlenme Amaçları, Veri İşlemenin Hukuki Sebebi ve Kişisel Verilerin Toplama Yöntemi\n' +
+        '\n' +
+        'İşlenen Kişisel Veriler\n' +
+        'İşlenme Amaçları\n' +
+        'Hukuki Sebepleri\n' +
+        'Toplama Yöntemleri\n' +
+        'Ad-soyad, e-posta, telefon, sipa bilgisi, Ödeme şekli ve detayları, IB numarası bilgisi, fatura\n' +
+        'Satın almak istediğiniz dijital ürünün satış\n' +
+        'işleminin\n' +
+        'gerçekleştirilmesi ve mesafeli satış\n' +
+        'sözleşmesinin gereğinin\n' +
+        'yerine getirilmesi amacıyla, E-fatura/e-arşiv faturanın düzenlenerek tarafinıza gönderimini sağlamak\n' +
+        'Vertex Yazılım  dijital ürününü satın almanız ve bizim bu bakımdan hizmetlerimizi yerine getirebilmemiz için\n' +
+        'gerekli olması (KVKK m.5/2-c),\n' +
+        'Uygulamanın\n' +
+        'yürürlüğü, güvenliği ve denetimleriyle ilgili mevzuattan doğan hukuki\n' +
+        'yükümlülüklerimizi yerine\n' +
+        'getirebilmemiz için zorunlu olması (KVKK m.5/2-ç), bir hakkın tesisi, kullanılması veya korunması için bu\tverinin\n' +
+        'işlenmesinin zorunlu olması (KVKK m.5/2- e) son olarak siz kullanıcılarımızın\n' +
+        'temel hak ve özgürlüklerine zarar vermemek kaydıyla, meşru\n' +
+        'menfaatlerimiz için zorunlu olması (KVKK m.5/2-f)\n' +
+        'Vertex Yazılım web sitesini ziyaret etmeniz, Bilgi sistemleri ve elektronik cihazlar,\n' +
+        'Sözleşme konusu hizmetin sunulması\n' +
+        'esnasında çevrimiçi elektronik\n' +
+        'formlar, diğer basılı formlar, e- posta, ilgili\n' +
+        'tarafindan beyan edilen belgeler\n' +
+        'vasıtasıyla\n' +
+        '\n' +
+        '\n' +
+        'Ad-soyad, e-posta, telefon, log kayıtları, IP adresi, Kullanıcı ID, adres, ödeme şekli ve detayları, yetkililerle yapılan görüşmelere ilişkin ses kayıtları bilgisi (çağrı kayıtları), sipariş bilgisi,\n' +
+        'fatura\n' +
+        'Satış sonrası teknik destek hizmetinin verilebilmesi, Uygulama içi güvenliğin ve denetimin sağlanabilmesi, doğabilecek herhangi bir\n' +
+        'anlaşmazlığın çözümü\n' +
+        'Vertex Yazılım dijital ürününü satın almanız ve bizim bu bakımdan hizmetlerimizi yerine getirebilmemiz için\n' +
+        'Vertex Yazılım web sitesini ziyaret etmeniz, Uzmanlarımıza Danışın canlı\n' +
+        'destek hattı\n' +
+        '\n' +
+        '\n' +
+        'aşamasında, ilgili kanun ve düzenlemelerine aykırı her türlü fiil, suç veya davranışa karşı sizin,\n' +
+        'Vertex Yazılım\n' +
+        'çalışanlarının ve diğer ilgili üçüncü\tkişilerin\n' +
+        'güvenliğini\tsağlamak,\n' +
+        'kanundan\tve\n' +
+        'düzenlemelerinden kaynaklanan\n' +
+        'yükümlülüklerimizi yerine getirmek ve yetkili ve görevli özel kamu kurum ve kuruluşlarına karşı her türlü dava, cevap ve itiraz hakkının kullanılması, uyuşmazlıklara ilişkin görüşme ve anlaşma süreçlerinin yürütülmesi, bizden bilgi talep etmeniz ve yasal hakların kapsamında başvuruda bulunmanız\thalinde gerekli bilgilerin tarafinıza ulaştırılabilmesi, sözleşme ve kanun ya da düzenlemelerine aykırı kullanımı engellemek, şüpheli işlemlerin ve hukuka\t\taykırı\n' +
+        'kullanımların\ttespit edilebilmesi\n' +
+        'gerekli olması (KVKK m.5/2-c),\n' +
+        'Uygulamanın\n' +
+        'yürürlüğü, güvenliği ve denetimleriyle ilgili mevzuattan doğan hukuki\n' +
+        'yükümlülüklerimizi yerine\n' +
+        'getirebilmemiz için zorunlu olması (KVKK m.5/2-ç), bir hakkın tesisi, kullanılması veya korunması için bu\tverinin\n' +
+        'işlenmesinin zorunlu olması (KVKK m.5/2- e) son olarak siz kullanıcılarımızın\n' +
+        'temel hak ve özgürlüklerine zarar vermemek kaydıyla, meşru\n' +
+        'menfaatlerimiz için zorunlu olması (KVKK m.5/2-f)\n' +
+        'üzerinden bizimle iletişime geçmeniz, Satın alma sonrasında teknik destek\n' +
+        'talep etmeniz, Vertex Yazılım dijital\n' +
+        'ürününde sorun bildirmeniz, Vertex Yazılım yetkililerini\n' +
+        'aramanız ya da WhatsApp\n' +
+        'aracılığıyla\n' +
+        'yetkili kişilerle iletişim\n' +
+        'kurmanız\n' +
+        '\n' +
+        'Bilgi sistemleri ve elektronik cihazlar,\n' +
+        'Sözleşme konusu hizmetin sunulması\n' +
+        'esnasında çevrimiçi elektronik\n' +
+        'formlar, diğer basılı formlar, e-posta, ilgili tarafindan\n' +
+        'beyan edilen belgeler\n' +
+        'vasıtasıyla\n' +
+        '\n' +
+        '\n' +
+        'IP Adresi, Kullanıcı ID, Log Kayıtları, program giriş çıkış bilgileri, kullanıcı adı ve şifre bilgileri\n' +
+        'İşlem güvenliğinin sağlanması\n' +
+        'Kişisel verileriniz, sayılan amaçların gerçekleştirilmesi doğrultusunda,\n' +
+        'KVKK’nın 5’inci maddesinde\n' +
+        'belirtilen;\n' +
+        'Kanunlarda açıkça öngörülmesi,\n' +
+        'İlgili kişinin temel hak ve özgürlüklerine\n' +
+        'zarar vermemek\n' +
+        'Bilgi sistemleri ve elektronik cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'kaydıyla, veri sorumlusunun meşru menfaatleri için veri işlenmesinin zorunlu olması\n' +
+        '\n' +
+        'Vertex Yazılım Dijital ürünü içerisinde “Sorun Bildir” bölümlerine bildirdiğiniz sorunlar ve yorumlarınız (program içi geri bildirim)\n' +
+        'Sistem içerisindeki sorunların saptanması ve düzeltilebilmesi, Müşteri Memnuniyetine Yönelik Aktivitelerin Yürütülmesi,\n' +
+        'Kişisel\tverileriniz,\n' +
+        'sayılan\tamaçların gerçekleştirilmesi doğrultusunda, KVKK’ nın 5’inci\n' +
+        'Vertex Yazılım web sitesini ziyaret etmeniz,\n' +
+        'Bilgi sistemleri ve elektronik cihazlar aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        'Müşteri İlişkileri Yönetimi\n' +
+        'maddesinde\n' +
+        '\n' +
+        '\n' +
+        'Süreçlerinin Yürütülmesi,\n' +
+        'belirtilen;\n' +
+        '\n' +
+        '\n' +
+        'Talep / Şikayetlerin Takibi\n' +
+        'İlgili kişi tarafindan\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'alenileştirilmiş olması\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'hukuki sebebine\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'dayanarak\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'işlenmektedir.\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'Vertex Yazılım dijital ürünü içerisindeki anket cevaplarınız: branş bilgisi, diploma/karne puanı, okul türü bilgisi (ortaokul, lise türü ya da mezun bilgisi), okul adı bilgisi, dershane, etüt merkezi, kursa gidip gitmediğinizin, özel ders alıp almadığınızın bilgisi, hedeflenen okul/bölüm bilgisi, daha önce sınava girilip girilmediği bilgisi.\n' +
+        'Anket çalışmalarının yapılması, anonimleştirilmiş istatistiki veri oluşturulabilmesi, kullanıcı deneyiminizi iyileştirmeye yönelik Vertex Yazılım çalışmaları ve operasyonel süreçlere ilişkin stratejik planlama, analiz ve iş geliştirme\n' +
+        'çalışmalarının yapılması, Vertex Yazılım uzman/danışmanlarının sizleri bu bilgiler\n' +
+        'aracılığıyla etkin bir\n' +
+        'şekilde yönlendirebilmesi, kullanıcı memnuniyetine yönelik aktivitelerin yürütülmesi\n' +
+        'Kişisel verileriniz, sayılan amaçların gerçekleştirilmesi doğrultusunda,\n' +
+        'KVKK’nın 5’inci maddesinde\n' +
+        'belirtilen;\n' +
+        'İlgili kişinin temel hak ve özgürlüklerine\n' +
+        'zarar\tvermemek kaydıyla, veri sorumlusunun meşru menfaatleri için veri\n' +
+        'işlenmesinin zorunlu olması hukuki\n' +
+        'sebebine dayanarak işlenmektedir.\n' +
+        'Vertex Yazılım anketlerine katılmanız\tve görüş,\t öneri, puanlama bildirmeniz,\t\tBilgi sistemleri ve\n' +
+        'elektronik cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        'Ad, soyad, e-posta adresi, cep telefonu bilgileri, IP adresi, Kullanıcı ID, Vertex Yazılım web sitemizi ziyaret etmeniz sırasında elde edilen kullanım (gezinti) bilgileriniz, çerez bilgileri (reklam tanıtıcısı/kimliği bilgileri, yaşadığınız şehrin bilgisi\n' +
+        'Size özel olanak ve teklifler sunulması, genel veya size özel kişiselleştirilmiş\n' +
+        'kampanyalar, avantajlar, promosyonlar, reklamlar, deneme sınavları ve diğer etkinliklerin\n' +
+        'düzenlenmesi, profilleme, raporlama, pazarlama ve analiz\t\tçalışmalarının yapılması, Uygulama, Site veya\tdiğer\t3.\t\tTaraf ortamlarında\tVertex Yazılım reklamlarının ve pazarlama,\t\t\tiletişim faaliyetlerinin (Uygulama içerisinde size özel ya da genel iletilen bildirimler, hedeflenmiş\n' +
+        'reklam/tanıtımların yapılması ve etkin bir kullanıcı deneyimi\n' +
+        'yaşamanızı sağlamak, kullanıcı ekranının\n' +
+        'özelleştirilmesi, size özel sunduğumuz kampanyalar, anket) yapılması, kullanıcı deneyiminizi iyileştirmeye yönelik çalışmaları ve\n' +
+        'operasyonel süreçlere ilişkin stratejik planlama, analiz ve iş geliştirme, Kullanımlara ilişkin\tistatistiksel çalışmaların yapılması.\n' +
+        'Pazarlama,\n' +
+        'segmentasyon ve analiz çalışmaları kapsamında kişisel veri\tişleme\n' +
+        'süreçlerine ve ticari iletişim faaliyetlerine ilişkin\tolarak\n' +
+        'vereceğiniz “açık rıza” (KVKK m.5/1) hukuki sebeplerine dayanarak\n' +
+        'işlenmektedir.\n' +
+        'Vertex Yazılım web sitesini ziyaret\n' +
+        'etmeniz, Vertex Yazılım anketlerine katılmanız ve görüş, öneri, puanlama bildirmeniz, Bilgi sistemleri\tve elektronik\n' +
+        'cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        'Hukuki metinleri (Aydınlatma Metni, Açık\tRıza\tMetni,\tMesafeli\tSatış Sözleşmesi, Ön Bilgilendirme Formu) onay kayıtları bilgisi\n' +
+        'Kanundan doğan ispat\n' +
+        'yükümlülüklerimizin yerine getirilebilmesi\n' +
+        'Kişisel verileriniz, sayılan amaçların gerçekleştirilmesi doğrultusunda,\n' +
+        'KVKK’nın 5’inci maddesinde\n' +
+        'belirtilen;\n' +
+        'Uygulamanın\n' +
+        'yürürlüğü, güvenliği ve denetimleriyle ilgili mevzuattan doğan hukuki\n' +
+        'yükümlülüklerimizi yerine getirebilmemiz için zorunlu olması\n' +
+        '(KVKK m.5/2-ç),\n' +
+        'Bir hakkın tesisi, kullanılması veya korunması için bu verinin işlenmesinin\n' +
+        'zorunlu olması (KVKK m.5/2-e) hukuki\n' +
+        'sebeplerine dayanarak\n' +
+        'işlenmektedir.\n' +
+        'Bilgi sistemleri ve elektronik cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        'Her türlü kanaldan yapmış olduğunuz öneri, görüş, puanlamalarınıza ilişkin bilgiler, Çözücü, Koçum Yanımda, Şimdi Anladım Uygulamalarında yapılan anketlere verdiğiniz yanıtlar, görüş, öneri, puanlamalarınız,\n' +
+        'Hizmetlerin\tiyileştirilmesi, geliştirilmesi amacıyla istatistiki veri oluşturulabilmesi,\n' +
+        'kullanıcı deneyiminizi iyileştirmeye yönelik Vertex Yazılım çalışmaları\n' +
+        'Kişisel verileriniz, sayılan amaçların gerçekleştirilmesi doğrultusunda,\n' +
+        'KVKK’nın 5’inci maddesinde\n' +
+        'belirtilen;\n' +
+        'Siz kullanıcılarımızın temel hak ve özgürlüklerine zarar vermemek kaydıyla, meşru\n' +
+        'menfaatlerimiz için zorunlu olması (KVKK m.5/2-f),\n' +
+        'Vertex Yazılım web sitesini ziyaret\n' +
+        'etmeniz, Vertex Yazılım anketlerine katılmanız ve görüş, öneri, puanlama bildirmeniz, Bilgi sistemleri\tve elektronik\n' +
+        'cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        'Siz\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'kullanıcılarımızın\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'temel\thak\tve\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'özgürlüklerine zarar\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'vermemek kaydıyla,\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'meşru\n' +
+        'menfaatlerimiz için zorunlu olması (KVKK m.5/2-f) hukuki\n' +
+        'sebeplerine dayanarak\n' +
+        'işlenmektedir.\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        'Size yönelik oluşturulmuş Vertex Yazılım uzman/danışman notu, çalışma takviminiz, test çözme ve ders izleme istatistiklerinizin bilgisi\n' +
+        'Hizmetlerin iyileştirilmesi, geliştirilmesi,\n' +
+        'Kişiselleştirilmiş bir kullanıcı\n' +
+        'deneyimi hizmeti sunmak\n' +
+        'Kişisel verileriniz, sayılan amaçların gerçekleştirilmesi doğrultusunda,\n' +
+        'KVKK’nın\t5’inci maddesinde\n' +
+        'belirtilen;\n' +
+        'Vertex Yazılım dijital ürünü satın almanız ve bu bakımdan hizmetlerimizi yerine getirebilmemiz için gerekli olması (KVKK m.5/2-c),\n' +
+        'Siz kullanıcılarımızın temel hak ve\n' +
+        'özgürlüklerine zarar vermemek kaydıyla, meşru\n' +
+        'menfaatlerimiz için zorunlu olması (KVKK m.5/2-f) hukuki\n' +
+        'sebeplerine dayanarak\n' +
+        'işlenmektedir.\n' +
+        'Bilgi sistemleri ve elektronik cihazlar\n' +
+        'aracılığıyla toplanmaktadır.\n' +
+        '\n' +
+        '\n' +
+        '\n' +
+        '\t•\tKişisel verilerinizi kimlere ve hangi amaçlarla aktarmaktayız?\n' +
+        'Kişisel verileriniz KVKK Md.28/1 çerçevesinde talep edilmesi halinde aydınlatma yükümlülüğü olmadan ve açık rızanız aranmadan ilgili makamlara aktarılabilir. Bunun dışında öngörülemeyen durumlarda da kişisel verileriniz kanunlarda açıkça belirtilmiş durumlarda talep edilmesi halinde kanunlarda belirtilen kamu kurumlarına (Bakanlıklar gibi idari makamlara) kanunda öngörülen amaç ve sınırlamalar dahilinde aktarılabilir.\n' +
+        'Aydınlatma yükümlülüğü olmayan ve açık rızanızı gerektirmeyen yasal yükümlülüklerimizin dışında; kanun m.8’de belirtilen şartlar çerçevesinde;\n' +
+        '\t•\tHizmetlerin yerine getirilmesi ve hizmetlerin iyileştirilmesi amaçlarıyla Vertex Yazılım ortaklarına, çözüm ortaklarına,\n' +
+        '\t•\tGelişim Bilgilendirme Sisteminin kullanılması halinde velilere,\n' +
+        '\t•\tYetkili ve görevli özel veya kamu kurum ve kuruluşlar (Vergi daireleri, Aile ve Sosyal Politikalar Bakanlığı gibi) ile adli makamlara ve resmi kurum/kuruluşlara karşı olan bilgi, belge verme, faaliyetlerimizin mevzuata uygun yürütülmesi ve ilgili sair yükümlülüklerimizi yerine getirmek ve dava ve cevap hakları gibi yasal haklarımızı kullanabilmek amacıyla bizden istenen bilgileri anılan bu kurum, kuruluş ve makamlara,\n' +
+        '\n' +
+        '\t•\tFaaliyetlerin mevzuata uygun yürütülmesi, sözleşme ve muhasebe süreçlerinin yürütülmesi amaçlarıyla anlaşmalı olunan mali müşavirlik ve hukuk bürolarına,\n' +
+        '\t•\tRıza göstermeniz halinde, Vertex Yazılım’ın hizmet faaliyetlerinin yerine getirilmesi amacı ile verilen hizmetler ve yukarıda belirtilen amaçlar kapsamında, bilişim teknolojileri, pazarlama/reklam/analiz faaliyetleri ya da uzmanlık gerektiren danışmanlık vb. hizmetlerini almak amaçlarıyla yurtiçi ve yurtdışında bulunan iş ortaklarına, tedarikçilere ve hizmet sağlayıcılara (elektronik ileti aracı hizmet sağlayıcıları, çağrı merkezi, cihazlar aracılığıyla kişisel veri toplayanlar, pazarlama/reklam/analiz hizmeti sağlayıcıları, veri tabanı ve sunucu hizmeti sağlayıcıları, altyapı bakım ve destek ve yazılım lisanslama hizmeti sağlayıcıları, e-fatura/e- arşiv fatura hizmeti sağlayıcıları, bağımsız denetim hizmeti sağlayıcıları, arşivleme ve cloud hizmeti verenler gibi) aktarmaktayız.\n' +
+        '\t•\tKişisel verilerinize ilişkin olarak haklarınız nelerdir?\n' +
+        'Kişisel Verilerin Korunması Kanunu’nun 11. maddesi gereğince aşağıda sunulan haklara sahip olduğunuzu hatırlatmak isteriz:\n' +
+        '\t•\tKişisel verilerinizin işlenip işlenmediğini öğrenme,\n' +
+        '\t•\tKişisel verileriniz işlenmişse buna ilişkin bizden bilgi talep etme,\n' +
+        '\t•\tKişisel verilerinizin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme,\n' +
+        '\t•\tYurt içinde veya yurt dışında kişisel verilerinizin aktarıldığı üçüncü kişileri bilme,\n' +
+        '\t•\tKişisel verilerinizin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme ve bu kapsamda yapılan işlemin kişisel verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme,\n' +
+        '\t•\tKVK Kanunu ve ilgili diğer kanun hükümlerine uygun olarak işlenmiş olmasına rağmen, işlenmesini gerektiren sebeplerin ortadan kalkması hâlinde kişisel verilerinizin silinmesini veya yok edilmesini isteme ve bu kapsamda yapılan işlemin kişisel verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme,\n' +
+        '\t•\tİşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme,\n' +
+        '\t•\tKişisel verilerinizin kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme.\n' +
+        '\n' +
+        'Vertex Yazılım, Kanun’a uygun olarak, idari ve teknik imkanlar dahilinde; siz kullanıcılarımızın kişisel verilerini kullanmalarını mümkün kılınması için gerekli olan sistemleri yürütmektedir.\n' +
+        'Haklarınıza ilişkin taleplerinizi, Veri Sorumlusuna Başvuru Usul ve Esasları Hakkında Tebliğ’e uygun şekilde yazılı olarak ya da kayıtlı elektronik posta (KEP) adresi, güvenli elektronik imza, mobil imza ya da bize daha önce bildirdiğiniz ve sistemimizde kayıtlı olan elektronik posta adresini kullanarak aşağıda belirtmiş olduğumuz adreslere her zaman iletebilirsiniz. Başvurunuzu dilerseniz, VERTEX YAZILIM ELEKTRONİK BİLİŞİM İTHALAT İHRACAT SANAYİ VE TİCARET A.Ş.  “Veri Sahibi Başvuru Formu’nda” yer alan yöntemlerle Şirketimize iletebilirsiniz. Talebiniz, niteliğine göre en kısa sürede ve en geç otuz gün içinde ücretsiz olarak sonuçlandıracaktır. Ancak, işlemin ayrıca bir maliyeti gerektirmesi hâlinde, Kişisel Verileri Koruma Kurulu tarafindan belirlenen tarifedeki ücret tarafindan tahsil edilebilir.\n' +
+        'Veri Sorumlusu: VERTEX YAZILIM ELEKTRONİK BİLİŞİM İTHALAT İHRACAT SANAYİ VE TİCARET A.Ş.\n' +
+        'e-posta: \n' +
+        'KEP adresi: \n' +
+        '\n' +
+        'Adres: Muradiye Mah. Celal Bayar Üniversitesi Kampüsü Küme Evleri Tekno Kent Blok No:22 Yunusemre/MANİSA\n' +
+        '\n' +
+        'Kişisel verilerinizin işleme faaliyetleriyle ilgili gerekli açıklamalar bu Aydınlatma Metninde yer almaktadır. Yine de bu konuya ilişkin daha detaylı bilgi talep etmeniz halinde, www.vertexyazilim.com.tr internet sitemizde yer alan Kişisel Verilerin İşlenmesi ve Korunması Politikamızı inceleyebilir ya da bizleri arayabilirsiniz.\n' +
+        '\n',
     },
     {
-      title: "Açık Rıza Metni",
+      title: 'BİLGİ GÜVENLİĞİ POLİTİKASI',
       content:
-        "VERTEX YAZILIM KULLANICI AÇIK RIZA       METNİ\n" +
-        "VERTEX YAZILIM ELEKTRONİK BİLİŞİM İTHALAT İHRACAT SANAYİ VE TİCARET A.Ş. , kısaca Vertex Yazılım tarafından,  Vertex Yazılım dijital ürününü satın almam sırasında kişisel verilerim hakkında, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“Kanun”) uyarınca hazırlanmış Vertex Yazılım Kullanıcı Aydınlatma Metni aracılığıyla bilgilendirildim.\n" +
-        "Vertex Yazılım tarafından verilerimin dijital ürününü satın almam kapsamında:\n" +
-        "Yurtdışına Veri Aktarımı Hakkında Açık Rıza\n" +
-        "\n" +
-        "Vertex Yazılım anketlerini doldurmam (Örn: Google, Facebook anketleri), Whatsapp aracılığıyla bilgilendirilmelerin yapılması ya da verilerimin tutulduğu, aktarıldığı sistemlerin, e-posta sağlayıcıların veri tabanlarının yurtdışında konumlandırılmış olması nedeniyle veyahut bilişim teknolojileri, pazarlama/reklam faaliyetleri ya da uzmanlık gerektiren danışmanlık vb. konularda Vertex Yazılım’ın yurt dışında yerleşik iş ortakları, tedarikçileri ve hizmet sağlayıcıları ile paylaşılması sırasında yurtdışına aktarım yapılmasına özgür irademle açık rıza veriyorum.\n" +
-        "\n" +
-        "Analiz/İstatistik/Pazarlama Çerezleri Hakkında Açık Rıza\n" +
-        "\n" +
-        "Kişisel verilerimin, bana özel olanak ve teklifler sunulması, genel veya bana özel kişiselleştirilmiş kampanyalar, avantajlar, promosyonlar, reklamların oluşturulması, kampanya, yarışma, çekiliş ve diğer etkinliklerin düzenlenmesi, segmentasyon, profilleme, raporlama, pazarlama ve analiz çalışmalarının yapılması, Mobil Uygulama, Site veya diğer 3. taraf ortamlarında Vertex Yazılım’a ait reklamların ve pazarlama/iletişim faaliyetlerinin (Mobil Uygulama ve Site’deki bildirimler, pop-up gösterimi, kişiye özel teklifler, kullanıcı ekranlarının özelleştirilmesi, anket vs.) yürütülmesi ile kullanıcı deneyimini iyileştirmeye yönelik çalışmaların yapılması amacıyla işlenmesine özgür irademle açık rıza veriyorum.\n" +
-        "\n" +
-        "Ticari İleti Hakkında Açık Rıza\n" +
-        "\n" +
-        "6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun gereğince (ETDHK), kişisel verilerimin; ihtiyaçlarım doğrultusunda bana uygun ürün, uygulama, avantaj veya kampanyadan yararlanabilmem; genel bilgilendirme yapılması, tanıtım, reklam, promosyon, satış ve pazarlama, kutlama, temenni amacıyla işlenmesi ve bu doğrultuda iletişim adreslerime; Vertex Yazılım adına bu konuda gizlilik yükümlülüğü altında hizmet veren 3. Kişiler tarafından çağrı, kısa mesaj (SMS), multimedya nesneleri içeren MMS, fax, otomatik arama makineleri, e-posta ve benzeri iletişim kanallarından iletilecek veri, ses ve görüntü içerikli bilgilendirme, tanıtım ve pazarlama iletilerinin gönderilmesi bakımından ad, soyad ve iletişim numara, e-posta ve adres bilgilerimin işlenmesine özgür irademle açık rıza veriyorum.\n" +
-        "\n" +
-        "\n" +
-        "Aydınlatma Metni’ nde açıklandığı üzere; işlenen ve saklanan verilerimin neler olduğu ve hangi amaçlar doğrultusunda işlendiği, hangi kişi, kurum ve kuruluşlara aktarım yapıldığı konularında bilgilendirildim. İrademin değişmesi halinde ise 6698 sayılı Kanunun 11. maddesi uyarınca haklarımın neler olduğunun bilincindeyim.\n" +
-        "\n",
+        'Vertex Yazılım olarak sahip olduğumuz bilginin kıymetli ve değerli olduğunu biliyor ve bu bilginin korunması için TS ISO/IEC 27001 Bilgi Güvenliği Yönetim Standardının gereklilikleri göz önünde bulundurarak gerekli önlemleri alıyoruz. Bu kapsamda bilgi güvenliği politikamız;\n\n' +
+        'Bilgi Güvenliği Standartlarının gerekliliklerini yerine getirmek,\n' +
+        'Bilgi Güvenliği ile ilgili tüm yasal mevzuata uyum sağlamaya çalışmak,\n' +
+        'Bilgi varlıklarına yönelik riskleri tespit etmek ve sistematik bir şekilde riskleri yönetmek,\n' +
+        'Bilgi Güvenliği Yönetim Sistemini sürekli gözden geçirmek ve iyileştirmek,\n' +
+        'Bilgi Güvenliğini tehlikeye atacak herhangi bir olayın oluşmasını engelleyecek önlemleri almak,\n' +
+        'Bilgi Güvenliğine yönelik herhangi bir olay olduğunda gerekli çalışmaları yaparak tehlikeyi bertaraf etmek,\n' +
+        'Bilgi güvenliği seviyesini en üst düzeyde tutarak şirketimizin güvenilirliğini ve marka imajını korumak,\n' +
+        'Bilgi Güvenliği farkındalığını artırmak için, teknik ve davranışsal yetkinlikleri geliştirecek şekilde eğitimler gerçekleştirmek,\n' +
+        'Bilgi Güvenliği farkındalığını arttırmak ve bilgiyi korumanın çerçevesini belirlemek için çalışan politikaları oluşturmak ve çalışanlarımızın bu politikalara uymasını sağlamak,\n' +
+        'İş/Hizmet sürekliliğine bilgi güvenliği tehditlerinin etkisini azaltmak ve işin sürekliliği ve sürdürülebilirliğini sağlamak\n' +
+        'Kurulan kontrol altyapısı ile bilgi güvenliği seviyesini korumak ve iyileştirmektir.',
+    },
+    {
+      title: 'KİŞİSEL VERİLERİN İŞLENMESİ VE KORUNMASI POLİTİKASI',
+      content:
+        '\n' +
+        'KİŞİSEL VERİLERİN İŞLENMESİ VE KORUNMASI POLİTİKASI \n' +
+        '1. AMAÇ \n' +
+        'Tanımı aşağıda (“2-Tanımlar” Başlığı Altında) verilecek olan “kişisel veri” temel insan hakkı olarak Avrupa Birliği Temel Haklar Bildirgesi’nin 8. ve Avrupa Birliği’nin İşleyişi Hakkında Antlaşma’nın 16. maddelerinde yerini almıştır. Ayrıca kişisel veri Türkiye Cumhuriyeti Anayasa’sının “Özel Hayatın Gizliliği” başlıklı 20. maddesinde de düzenleme altına alınarak, temel haklar arasına dahil edilmiştir. Bu önemi sebebiyle, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) gerçek kişilere ait kişisel verilerin işlenmesinde başta özel hayatın gizliliği olmak üzere kişilerin temel hak ve özgürlüklerini korumak ve kişisel verileri işleyen gerçek ve tüzel kişilerin yükümlülükleri ile uyacakları usul ve esasları düzenlemek maksadıyla 7 Nisan 2016 tarihli Resmi Gazete’ de yayınlanmak suretiyle ihdas edilmiş ve yürürlüğe girmiştir.  Muradiye Mah. Celal Bayar Ünv. Kampüsü Küme Evler Teknokent No:22 Yunusemre /MANİSA adresinde mukim Vertex Yazılım Elektronik Bilişim İthalat İhracat Sanayi ve Ticaret A.Ş.  (“Şirket”) olarak temel insan haklarına atfettiğimiz önem ve kişisel verilerin üstün kıymeti göz önüne alınarak KVKK’ nın öngörmüş olduğu yükümlülük dâhilinde işbu Kişisel Verilerin İşlenmesi ve Korunması Politikası’nı (“Politika”) 6698 Sayılı Kişisel Verilerin Korunması Kanunu Kapsamında sizlerin bilgisine sunmaktayız. KVKK uyarınca, Veri Sorumlusu sıfatıyla, Şirket, çalışanlarını, çalışan adaylarını, OSINIF  kullanıcılarını, www.osinif.com internet sitesinde gezinen ziyaretçileri ve kişisel verisi işlenen 3. kişileri aşağıdaki şekilde bilgilendirmekte ve KVKK’ nın 10. maddesinde belirtilen kapsamda aşağıdaki şekilde aydınlatmaktayız.\n' +
+        '\n' +
+        ' 2. POLİTİKANIN KAPSAMI VE KİŞİSEL VERİ SAHİPLERİ \n' +
+        'Bu Politika; otomatik olan ya da herhangi bir veri kayıt sisteminin parçası olmak kaydıyla otomatik olmayan yollarla, Çalışan, Çalışan Adayı, Alıcı, Kullanıcı, Ziyaretçi, Gerçek Kişi İş Ortağı, Yetkilisi ve Çalışanı, Uzmanlar, Danışmanlar, Üçüncü Kişiler başta olmak üzere kişisel verileri Şirketimiz tarafından işlenen kişiler için hazırlanmıştır ve bu belirtilen kişiler kapsamında uygulanacaktır. Şirketimiz bu Politikayı internet sitesinde yayımlamak suretiyle bahse konu kişisel veri sahiplerini Kanun hakkında bilgilendirmektedir. Bu kapsamda işbu Politika kapsamındaki kişisel veri sahipleri aşağıdaki gibidir: Çalışan Şirket bünyesinde çalışan gerçek kişilerdir. Çalışan Adayı Şirkete herhangi bir yolla iş başvurusunda bulunmuş ya da özgeçmiş ve ilgili bilgilerini Şirket’in incelemesine açmış olan gerçek kişilerdir. Alıcı OSINIF dijital ürünlerini satın alan kişilerdir. Kullanıcı OSINIF dijital ürünlerini kullananlardır. Ziyaretçi Şirket’in sahip olduğu fiziksel yerleşkelere çeşitli amaçlarla giren veya internet sitelerini herhangi bir amaç ile ziyaret eden tüm gerçek kişilerdir. Gerçek Kişi İş Ortağı, Yetkilisi, Çalışanı Şirketin her türlü iş ilişkisinde bulunduğu gerçek kişiler, tüzel kişi ise yetkilileri ve bunların çalışanlarıdır. Uzman, Danışman OSINIF dijital ürünlerinin hazırlanmasında, işbirlikçi olarak fayda sağlayan tüm uzman ve danışmanlardır. Rehberlik Danışanları OSINIF rehberlik servisinde, kullanıcılara destek sağlayan alanında yetkin ve yetkili kişilerdir. Üçüncü Kişi İşbu Kişisel Verilerin Korunması ve İşlenmesi Politikası kapsamına ve bu Politikada herhangi bir kişisel veri sahibi kategorisine girmeyen diğer gerçek kişilerdir. \n' +
+        '\n' +
+        '3. TANIMLAR\n' +
+        ' İşbu Politikada yer verilen kavramlar aşağıda belirtilen anlamları ifade eder: .Şirket/Şirketimiz Muradiye Mah. Celal Bayar Ünv. Kampüsü Küme Evler Teknokent No:22 Yunusemre /MANİSA adresinde mukim Vertex Yazılım Elektronik Bilişim İthalat İhracat Sanayi ve Ticaret  A.Ş.’yi ifade eder. \n' +
+        '.Veri Sahibi/İlgili Kişi Kişisel verisi işlenen gerçek kişi. \n' +
+        '.Veri Sorumlusu Kişisel verilerin işleme amaçlarını ve vasıtalarını belirleyen, veri kayıt sisteminin kurulmasından ve yönetilmesinden sorumlu olan gerçek veya tüzel kişi. \n' +
+        '.Kişisel Veri/Veriler Kimliği belirli veya belirlenebilir gerçek kişiye ilişkin her türlü bilgidir.\n' +
+        '. Özel Nitelikli Kişisel Veri/Veriler Irk, etnik köken, siyasi düşünce, felsefi inanç, din, mezhep veya diğer inançlar, kılık kıyafet, dernek vakıf ya da sendika üyeliği, sağlık, cinsel hayat, ceza mahkûmiyeti ve güvenlik tedbirleriyle ilgili veriler ile biyometrik ve genetik verilerdir. \n' +
+        '.Kişisel Verilerin İşlenmesi Kişisel verilerin tamamen veya kısmen otomatik olan ya da herhangi bir veri kayıt sisteminin parçası olmak kaydıyla otomatik olmayan yollarla elde edilmesi, kaydedilmesi, depolanması, muhafaza edilmesi, değiştirilmesi, yeniden düzenlenmesi, açıklanması, aktarılması, devralınması, elde edilebilir hâle getirilmesi, sınıflandırılması ya da kullanılmasının engellenmesi gibi veriler üzerinde gerçekleştirilen her türlü işlem. \n' +
+        '.Kurul Kişisel Verileri Koruma Kurulu.\n' +
+        '.Kanun/KVKK 7 Nisan 2016 tarihli ve 29677 sayılı Resmi Gazete ’de yayımlanan, 24 Mart 2016 tarihli ve 6698 sayılı Kişisel Verilerin Korunması Kanunu. \n' +
+        '.Politika Şirket tarafından oluşturulan kişisel veri işlenmesi ve koruma politikası. \n' +
+        '.Veri İşleyen Veri sorumlusunun verdiği yetkiye dayanarak onun adına kişisel verileri işleyen gerçek veya tüzel kişi\n' +
+        '. Veri Kayıt Sistemi Kişisel verilerin belirli kriterlere göre yapılandırılarak işlendiği kayıt sistemi. .İlgili Kullanıcı Verilerin teknik olarak depolanması, korunması ve yedeklenmesinden sorumlu olan kişi ya da birim hariç olmak üzere veri sorumlusu organizasyonu içerisinde veya veri sorumlusundan aldığı yetki ve talimat doğrultusunda kişisel verileri işleyen kişilerdir.\n' +
+        '. Çerez (Cookie) Kullanıcıların bilgisayarlarına yahut mobil cihazlarına kaydedilen ve ziyaret ettikleri web sayfalarındaki tercihleri ve diğer bilgileri depolamaya yardımcı olan küçük dosyalardır.\n' +
+        '. Açık Rıza Belirli bir konuya ilişkin, bilgilendirilmeye dayanan ve özgür iradeyle açıklanan rızayı ifade eder. \n' +
+        '.İmha Kişisel verilerin silinmesi, yok edilmesi veya anonim hale getirilmesi. \n' +
+        '.İrtibat Kişisi Veri sorumlusu Şirketimizin Kanun ve bu Kanuna dayalı olarak çıkarılacak ikincil düzenlemeler kapsamındaki yükümlülükleriyle ilgili olarak, Kurum ile kurulacak iletişim için veri sorumlusu tarafından Sicile kayıt esnasında bildirilen gerçek kişi. (İrtibat kişisi Veri Sorumlusunu temsile yetkili değildir. Adından anlaşılacağı üzere yalnızca veri sorumlusu ile ilgili kişilerin ve Kurumun iletişimini “irtibatı” sağlamak üzere görevlendirilen kişidir.) \n' +
+        '.Kayıt Ortamı Tamamen veya kısmen otomatik olan ya da herhangi bir veri kayıt sisteminin parçası olmak kaydıyla otomatik olmayan yollarla işlenen kişisel verilerin bulunduğu her türlü ortam\n' +
+        ' 4. KİŞİSEL VERİLERİN İŞLENMESİNDE GENEL İLKELER \n' +
+        'Şirket tarafından Kişisel Veriler, Kanunda ve bu Politikada öngörülen usul ve esaslara uygun olarak işlenir. Şirket, Kişisel Verileri işlerken aşağıdaki ilkelerle hareket eder: \n' +
+        '• Kişisel Veriler, ilgili hukuk kurallarına ve dürüstlük kuralının gereklerine uygun olarak işlenir.\n' +
+        ' • Kişisel Verilerin doğru ve güncel olması sağlanır. Bu kapsamda verilerin elde edildiği kaynakların belirli olması, doğruluğunun teyit edilmesi, güncellenmesi gerekip gerekmediğinin değerlendirilmesi gibi hususlar özenle dikkate alınır. \n' +
+        '• Kişisel Veriler; belirli, açık ve meşru amaçlarla işlenir. Amacın meşru olması, Şirketin işlediği Kişisel Verilerin, yapmış olduğu iş veya sunmuş olduğu hizmetle bağlantılı ve bunlar için gerekli olması anlamına gelir. \n' +
+        '• Kişisel Veriler, Şirket tarafından belirlenen amaçların gerçekleştirilebilmesi için amaçla bağlantılı olup, amacın gerçekleştirilmesiyle ilgili olmayan veya ihtiyaç duyulmayan kişisel verilerin işlenmesinden kaçınılır. İşlenen veriyi, sadece amacın gerçekleştirilmesi için gerekli olanla sınırlı tutar. Bu kapsamda işlenen kişisel veriler, işlendikleri amaçla bağlantılı, sınırlı ve ölçülüdür. \n' +
+        '• İlgili mevzuatta verilerin saklanması için öngörülen bir süre bulunması halinde bu sürelere uyum gösterir; aksi durumda kişisel verileri, ancak işlendikleri amaç için gerekli olan süre kadar muhafaza kişisel verinin daha fazla muhafaza edilmesi için geçerli bir sebep kalmaması durumunda, söz konusu veri silinir, yok edilir veya anonim hale getirilir. \n' +
+        '\n' +
+        '5. KİŞİSEL VERİLERİN İŞLENME ŞARTLARI \n' +
+        'Kişisel veriler, kanunun 5. Maddesi uyarınca Veri Sahibi’ nin açık rızası olmaksızın işlenemez. Ancak yine aynı maddede yer alan düzenleme gereği; aşağıda yer alan şartlardan birinin varlığı halinde Veri Sahibinin açık rızası aranmaksızın kişisel veriler işlenecektir. -Kanunlarda Açıkça Öngörülmesi Veri sahibinin kişisel verileri, kanunda açıkça öngörülmekte ise diğer bir ifade ile ilgili kanunda kişisel verilerin işlenmesine ilişkin açıkça bir hüküm olması halinde işbu veri işleme şartının varlığından söz edilebilecektir. Örn: İş Kanunu veya İş Sağlığı ve Sosyal Güvenlik Kanunu hükümleri gereğince çalışanın özlük dosyasının tutulması. -Fiili İmkânsızlık Nedeniyle İlgilinin Açık Rızasının Alınamaması Fiili imkânsızlık nedeniyle rızasını açıklayamayacak durumda olan veya rızasına geçerlilik tanınmayacak olan kişinin kendisinin ya da başka bir kişinin hayatı veya beden bütünlüğünü korumak amacıyla kişisel verinin işlenmesinin zorunlu olması halinde veri sahibinin kişisel verileri işlenebilecektir. -Bir Sözleşmenin Kurulması veya İfasıyla Doğrudan Doğruya İlgili Olması Bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması kaydıyla, sözleşmenin taraflarına ait kişisel verilerin işlenmesinin gerekli olması halinde kişisel veriler veri öznelerinin açık rızaları olmadan şirket tarafından işlenebilir. Örn: OSINIF internet sitesinden dijital ürünü satın alan kişiye ait iletişim ve adres bilgilerinin kurulan mesafeli satış sözleşmenin ifası gereği işlenmesi ya da yine bu sözleşme gereği ürün bedelinin ödenmesi için alıcı kart bilgilerinin alınması. -Şirketin (Veri Sorumlusu) Hukuki Yükümlülüğünü Yerine Getirmesi İçin Zorunlu Olması Şirketimizin hukuki yükümlülüklerini yerine getirmesi için işlemenin zorunlu olduğu durumlarda veri sahibinin kişisel verileri işlenebilecektir. Örn: çalışana maaş ödenebilmesi için, çalışanın banka ve hesap bilgilerinin alınması, evli olup olmadığının, bakmakla yükümlü olduğu kişilerin, eşinin çalışıp çalışmadığının ve sosyal sigorta bilgilerinin sorulması -Kişisel Verinin Veri Sahibinin Kendisi Tarafından Alenileştirilmiş Olması Veri sahibinin, kişisel verisini alenileştirmesi durumunda, alenileştirme amacı ile sınırlı olmak kaydıyla kişisel veri şirketimizce işlenebilecektir. -Bir Hakkın Tesisi veya Korunması için Veri İşlemenin Zorunlu Olması Bir hakkın tesisi, kullanılması veya korunması için veri işlemenin zorunlu olması halinde veri sahibinin kişisel verileri işlenebilecektir. Örn: çalışan tarafından açılan bir davada ispat için bazı verileri kullanması -Veri Sahibinin Temel Hak ve Özgürlüklerine Zarar Vermemek Kaydıyla Şirketimizin Meşru Menfaatleri için Veri İşlenmesinin Zorunlu Olması Kişisel veri sahibinin temel hak ve özgürlüklerine zarar vermemek kaydıyla Şirketimizin meşru menfaatleri için veri işlemesinin zorunlu olması halinde veri sahibinin kişisel verileri işlenebilecektir. Örn: çalışanların temel hak ve özgürlüklerine zarar vermemek kaydıyla, onların terfileri, maaş zamları veya sosyal haklarının düzenlenmesinde ya da işletmenin yeniden yapılandırılması sürecinde görev ve rol dağıtımında esas alınmak üzere çalışanların kişisel verilerinin işlenmesi.\n' +
+        '\n' +
+        ' 6. ÖZEL NİTELİKTE KİŞİSEL VERİLERİN İŞLENMESİ \n' +
+        'Kişilerin ırkı, etnik kökeni, siyasi düşüncesi, felsefi inancı, dini, mezhebi veya diğer inançları, kılık ve kıyafeti, dernek, vakıf ya da sendika üyeliği, sağlığı, cinsel hayatı, ceza mahkûmiyeti ve güvenlik tedbirleriyle ilgili verileri ile biyometrik ve genetik verileri özel nitelikli kişisel veridir. Kanun’un 6. Maddesi uyarınca özel nitelikli kişisel veriler, veri sahibinin açık rızası alınmadan işlenemez. Ancak kişilerin cinsel hayatı ve sağlığı dışındaki özel nitelikli kişisel veriler kanunlarda öngörülen durumlarda veri sahibinin açık rızası alınmaksızın işlenebilecektir. Sağlık ve cinsel hayata ilişkin kişisel veriler ise ancak kamu sağlığının korunması, koruyucu hekimlik, tıbbi teşhis, tedavi ve bakım hizmetlerinin yürütülmesi, sağlık hizmetleri ile finansmanın planlanması ve yönetimi amacıyla, sır saklama yükümlülüğü altında bulunan kişiler veya yetkili kurum veya kuruluşlar tarafından ilgilinin açık rızası aranmaksızın işlenebilir. Bütün durumlarda, özel nitelikli kişisel verilerin işlenmesinde ayrıca kurul (Kişisel Verileri Koruma Kurulu) tarafından belirlenen yeterli önlemlerin alınması şarttır.\n' +
+        '\n' +
+        ' 7. KİŞİSEL VERİ SAHİPLERİNİN AYDINLATILMASI \n' +
+        'Şirketimiz, Kanun’un 10. Maddesine uygun olarak, Kişisel Veri işlenmesinden önce veri sahiplerini aydınlatır. Bu kapsamda Şirketimiz, kişisel verilerin elde edilmesi sırasında Aydınlatma Yükümlülüğü’ nü yerine getirir. Aydınlatma yükümlülüğü kapsamında ise Veri Sahiplerine yapılacak bildirim şu unsurları içerir. \n' +
+        '• Veri Sorumlusunun ve varsa temsilcisinin kimliği \n' +
+        '• Kişisel verilerin hangi amaçla işleneceği \n' +
+        '• İşlenen kişisel verilerin kimlere ve hangi amaçla aktarılabileceği \n' +
+        '• Kişisel veri toplamanın yöntemi ve hukuki sebebi\n' +
+        ' • Veri sahiplerinin KVKK Madde 11’de sayılan hakları Şirketimiz, Anayasa’nın 20. Ve KVKK’ nın 11. Maddesine uygun bir şekilde veri sahibinin bilgi talep etmesi halinde gerekli bilgilendirmeyi yapar.\n' +
+        '\n' +
+        ' 8. KİŞİSEL VERİLERİN AKTARILMASI \n' +
+        ' Kişisel Verilerin Yurt içinde Aktarılması Kanun’un 8. maddesi uyarınca Kişisel Veriler kural olarak, Veri Sahibinin açık rızası olmaksızın üçüncü kişilere aktarılamaz. Ancak işbu Politika’ nın 4. maddesinde sayılan, Veri Sahibinin açık rızası aranmayacak hallerden birinin mevcut olması halinde Kişisel Verilerin, Veri Sahibinin açık rızası olmaksızın yurt içinde üçüncü kişilere aktarımı mümkündür. Özel Nitelikli Kişisel Veriler bakımından ise yeterli önlemler alınmak kaydıyla Kanun’un 6. Maddesinin 3. Fıkrasında belirtilen şartlardan birinin mevcudiyeti halinde veri sahibinin açık rızası aranmaksızın veri aktarımı yapılması mümkündür. -Kişisel Verilerin Yurt Dışına Aktarılması Kanun’un 9. maddesi uyarınca Kişisel Veriler kural olarak, Veri Sahibinin açık rızası olmaksızın yurt dışına aktarılamaz. Ancak aşağıda belirtilen hallerden birinin mevcut olması durumunda Kişisel Verilerin, Veri Sahibinin açık rızası aranmaksızın yurt dışında üçüncü kişilere aktarımı mümkündür: \n' +
+        '• Bu Politika’ nın 4. ve 5. maddelerinde belirtilen, Veri Sahibi’ nin rızasının aranmayacağının belirtildiği hallerden birinin mevcut olması \n' +
+        '• Kişisel Verilerin aktarılacağı yabancı ülkede yeterli korumanın bulunması \n' +
+        '• Yeterli korumanın bulunmaması durumunda Türkiye’deki ve ilgili yabancı ülkedeki veri sorumlularının yeterli bir korumayı yazılı olarak taahhüt etmeleri ve Kurulun izninin bulunması Yeterli korumanın bulunduğu ülkeler Kurulca belirlenerek ilan edilir. Kişisel Veriler, uluslararası sözleşme hükümleri saklı kalmak üzere, Türkiye’nin veya Veri Sahibinin menfaatinin ciddi bir şekilde zarar göreceği durumlarda, ancak ilgili kamu kurum veya kuruluşunun görüşü alınarak Kurulun izniyle yurt dışına aktarılabilir. - Kişisel Verilerin Aktarılabileceği Üçüncü Kişiler Şirketimiz, Kişisel Verileri bu Politika’ da belirtilen amaçlarını gerçekleştirmek için, Kanun’un 8. ve 9. maddelerine uygun olarak, yurt içinde veya yurtdışındaki, gerçek veya tüzel kişi olabilecek, aşağıda belirtilen üçüncü kişilere aktarabilmektedir: \n' +
+        '• Danışmanlar \n' +
+        '• Denetim Firmaları \n' +
+        '• Hizmet Alınan Firmalar \n' +
+        '• İş birliği Yapılan Firmalar \n' +
+        '• Müşteriler\n' +
+        ' • Pay Sahipleri \n' +
+        '• Bankalar ve Finans Kuruluşları \n' +
+        '• Yargısal Merciler ve Kamu Otoriteleri \n' +
+        '\n' +
+        '9. KİŞİSEL VERİLERİNİZİN İŞLENME AMAÇLARI, İŞLEDİĞİMİZ KİŞİSEL VERİLERİNİZ, TOPLAMA YÖNTEMLERİ VE HUKUKİ SEBEPLERİ \n' +
+        '- İşlenme Amaçları Kişisel verileriniz KVKK’ da öngörülen sınırlara riayet edilerek Şirket mevzuatında gösterilen amaçları gerçekleştirmek için kullanılacaktır. İşleme amaçlar şunlardır; 1. Bilgi güvenliği süreçlerinin yürütülmesi, \n' +
+        '2. Çalışan adayı/ stajyer seçme ve yerleştirme süreçlerinin yürütülmesi ve İnsan kaynakları politikalarının en iyi şekilde planlanması ve uygulanması, \n' +
+        '3. Şirketimiz tarafından sunulan hizmetlerden yararlanmanız için gereken çalışmaların ilgili birimlerce yapılması, \n' +
+        '4. www.osinif.com internet sitesi Canlı Destek ile ya da diğer iletişim yollarıyla tarafımızla iletişime geçmeniz halinde, sizlere satın alma desteği ya da teknik destek sağlayabilmek, \n' +
+        '5. Şirketin ihtiyaç duyduğu alanlarda personel temini, 4857 sayılı İş Kanunu, 6331 sayılı İş Sağlığı ve Güvenliği Kanunu ve 5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu başta gelmek üzere iş hayatını düzenleyen mevzuat kapsamında hak ve yükümlülüklerin yerine getirilmesi,\n' +
+        ' 6. Personele ilişkin maaş ödeme, avans, prim, ikramiye vb. ödeme faaliyetlerinin yürütülmesi, Şirket içi yazışmaların yapılması, \n' +
+        '7. Şirket hukuk işlerinin icrası/takibi, Yetkili kamu kurum ve kuruluşları ile adli ve yargı makamlarına kanunlarda gösterilen haller dahilinde bilgi-belge temini,\n' +
+        ' 8. Finansal raporlama ve risk yönetimi işlemlerinin icrası/takibi, \n' +
+        '9. İş ortakları veya tedarikçilerle olan ilişkilerin yönetimi, \n' +
+        '10. Şirketteki organizasyon ve etkinlik (seminer, konferans, toplantı, eğitim, sempozyum vb.) yönetimi süreçlerinin işlerliğinin sağlanarak kamuoyuna duyurulması, \n' +
+        '11. Şirketin kamuoyunda bilinirliğinin sağlanması ve güncelliğinin korunabilmesi için internet sayfası ve sosyal medya hesaplarının güncel verilerle sürekliliğinin sağlanması, tanıtım ve reklam süreçlerinin yönetilmesi, \n' +
+        '12. OSINIF içeriklerinden, Kişisel Veri Sahipleri’ nin en iyi şekilde faydalandırılması ve onların talep, ihtiyaç ve isteklerine göre özel hale getirilerek önerilmesi, \n' +
+        '13. Şirkete talep ve şikayetlerini ileten Kişisel veri Sahipleri ile iletişime geçilmesi ve talep/şikâyet yönetiminin sağlanması, \n' +
+        '14. İnternet sitesinde sunulan hizmetlerin geliştirilmesi ve sitede oluşan hataların giderilmesi, 15. Saklama ve arşiv faaliyetlerinin yürütülebilmesi ve yıllık birim faaliyet raporlarının oluşturulabilmesi amacıyla mevzuatta gösterilen usullerle arşiv tutulması, \n' +
+        '16. Ziyaretçi kayıtlarının oluşturulması ve takibi, \n' +
+        '17. Bina, personel ve ziyaretçi güvenliğinin temini, \n' +
+        '18. Verilerin anonim hale getirilerek araştırma amacıyla istatistiki faaliyetlerde kullanılabilmesi, 19. Şirket adına Strateji Geliştirme Daire Başkanlığı öncülüğünde yeni stratejilerin geliştirilebilmesi, eski stratejilerin güncellenebilmesi ve gerekli analizlerin yapılması, \n' +
+        '20. KVKK kapsamında yapılacak ilgili kişi başvurularının alınması ve yanıtlanabilmesi amaçlarıyla sınırlı olarak Kanun’un 5. ve 6. maddelerinde belirtilen kişisel veri işleme şartları kapsamında işlenir. \n' +
+        'Bahsi geçen amaçlarla gerçekleştirilen işleme faaliyetinin, Kanun kapsamında öngörülen şartlardan herhangi birini karşılamıyor olması halinde, ilgili işleme sürecine ilişkin olarak Şirket tarafından açık rızanız temin edilmektedir.\n' +
+        ' - İşlenen Kişisel Veri Kategorileri; Kimlik Bilgileri İletişim Bilgileri Lokasyon Bilgileri Özlük Bilgileri Hukuki İşlem Müşteri İşlem Fiziksel Mekân Güvenliği İşlem Güvenliği Finansal/Mali Bilgileri Mesleki Deneyim Bilgileri Pazarlama Bilgileri Görsel/İşitsel Bilgiler Özel Nitelikli Kişisel Veriler - Kişisel Verilerinizin Toplanma Yöntemleri Kişisel verileriniz; \n' +
+        '• Web Sitesi, Uygulamalar, e posta, işe alım portalları dahil üçüncü şahıslara ait dijital mecralar veya bir yazılım üzerinden, \n' +
+        '• Sözleşmeler, başvurular, formlar, çağrı merkezi, uzaktan destek, satış ve pazarlama birimi, Web sitesindeki çerezler (Web sitesinde kullanılan çerezler belirlenebilir kılmamaktadır, detaylı bilgi için aşağıda yer alan Çerez Hakkında Bilgilendirme isimli kısmı inceleyiniz), telefon gibi vasıtalar aracılığı ile \n' +
+        '• İlgili Kişi ile yüz yüze yapılan görüşmeler aracılığı ile \n' +
+        '• Kayıt formu, internet üzerinden doldurulan kayıt/başvuru formları, alındı ve harcama belgeleri, etkinliklerde kullanılan görüntü ve ses kayıt cihazları, güvenlik kamera kayıtları ile \n' +
+        '• İnternet sitesinde yer alan sohbet başlatma butonu ve 08503088884 numaralı sabit hat aracılığı ya da “YKS-KPSS-LGS Uzmanlarımızdan Bilgi Alın!”, YKS Uzmanlarımıza Danışın” butonları ile tarafımızla iletişime geçilmesi sırasında, \n' +
+        '• ŞİRKET resmi e-mail adresi olan info@osinif.com adresine ya da herhangi bir mail adresine, kişisel veri gönderilmesi durumunda toplanmaktadır. Kişisel verileriniz ayrıca otomatik yollarla https://www.osinif.com/ adresi ve uzantılarında kullanılan çerezler (cookie) vasıtasıyla da toplanmaktadır. Söz konusu çerezler, yalnızca ziyaretçinin siteyi tam verimlilikte kullanabilmesi için gerekli çerezler olup ziyaretçinin tercihlerini hatırlamak amacıyla kullanılmakta ve başka bir kişisel veri temin etmemektedir. Kişisel Veri İşlemenin Hukuki Sebepleri KVKK, kişisel verilerin işlenme şartlarını 5. maddesinin 2. fıkrasında listelemektedir. Eğer bir veri sorumlusu tarafından kişisel verilerin işlenme amaçları, KVKK’ da listelenmiş olan kişisel veri işleme şartları çerçevesinde değerlendirilebiliyorsa, o veri sorumlusu kişisel verileri hukuka uygun olarak işleyebilmektedir. Bu kapsamda Şirket tarafından da güdülmekte olan kişisel veri işleme amaçlarının, KVKK’ da düzenlenen kişisel veri işleme şartları kapsamında değerlendirilebildiği durumlarda Şirket tarafından kişisel veri işleme faaliyetleri gerçekleştirilmektedir. Şirket kişisel veri işleme şartları kapsamına girmeyen herhangi bir kişisel veri işleme faaliyetinde bulunmamaktadır.\n' +
+        ' KVKK’da yer alan kişisel veri işleme şartları şunlardır;\n' +
+        ' • İlgili kişinin açık rızasının bulunması, \n' +
+        '• Kanunlarda açıkça öngörülmesi, \n' +
+        '• Fiili imkânsızlık nedeniyle rızasını açıklayamayacak durumda bulunan veya rızasına hukuki geçerlilik tanınmayan kişinin kendisinin ya da bir başkasının hayatı veya beden bütünlüğünün korunması için zorunlu olması,\n' +
+        ' • Bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması kaydıyla sözleşmenin taraflarına ait kişisel verilerin işlenmesinin gerekli olması,\n' +
+        ' • Veri sorumlusunun hukuki yükümlülüğünü yerine getirebilmesi için zorunlu olması, \n' +
+        '• Veri sahibinin kendisi tarafından alenileştirilmiş olması, \n' +
+        '• Bir hakkın tesisi, kullanılması veya korunması için veri işlemenin zorunlu olması, \n' +
+        '• Veri sahibinin temel hak ve özgürlüklerine zarar vermemek kaydıyla, veri sorumlusunun meşru menfaatleri için veri işlenmesinin zorunlu olması. Özel nitelikli kişisel veriler için de temel işleme şartı açık rızadır ve Şirket temelde özel nitelikli kişisel veri işleme amacı gütmemektedir. Ancak faaliyetimiz gereği işlememiz gereken veya açık rızanız ile onay verdiğiniz özel nitelikli kişisel verileriniz de mevzuat dahilinde ölçülü olarak işlenmektedir.\n' +
+        ' KVKK’da özel nitelikli kişisel verilerin işlenebilmesi için sayılan şartlar şunlardır; \n' +
+        '• İlgili kişinin açık rızasının bulunması, \n' +
+        '• Sağlık ve cinsel hayat dışındaki özel nitelikli kişisel veriler için kanunlarda açıkça öngörülmesi, \n' +
+        '• Sağlık ve cinsel hayata ilişkin kişisel veriler ise ancak; kamu sağlığının korunması, koruyucu hekimlik, tıbbî teşhis, tedavi ve bakım hizmetlerinin yürütülmesi, sağlık hizmetleri ile finansmanının planlanması ve yönetimi amacıyla, sır saklama yükümlülüğü altında bulunan kişiler veya yetkili kurum ve kuruluşlar tarafından ilgilinin açık rızası aranmaksızın işlenebilir. Bir kişisel veri işleme faaliyetini hukuka uygun kılan bir veya birden fazla kişisel veri işleme şartı aynı anda bulunabilmektedir. Söz konusu amaçlarımızı gerçekleştirebilmek için yukarıda belirttiğimiz verilerinizin işlenmesi gereği hasıl olmaktadır. Şirketimize, kimlik bilgileri aktarılırken aslında işleme amaçlarımız dahilinde olmayan veriler de tarafımıza aktarılabilmektedir. İdari ve teknik tedbirler dahilinde söz konusu verileri mevzuatta öngörülen süreler sonunda siliyor ve/veya anonim hale getiriyoruz ancak her koşulda bu durumu temin etmek mümkün olmamaktadır. Bu halde, söz konusu verilerin işlenmesi amacıyla açık rızanıza başvurmak gerekmektedir\n',
+      // ... continue with rest of content ...
     },
   ];
   return (
     <View
       style={{
         flex: 1,
-        alignItems: "center",
+        alignItems: 'center',
         paddingTop: 10,
         backgroundColor: COLORS.primary,
-      }}
-    >
+      }}>
       <DrawerScreensTitle
         style={{
           paddingLeft: 0,
         }}
-        title={"Yasal Bilgiler"}
+        title={'Yasal Bilgiler'}
       />
 
       <ScrollView
@@ -171,9 +445,8 @@ const LegalInfoScreen = () => {
         }}
         contentContainerStyle={{
           width: SIZES.width,
-          alignItems: "center",
-        }}
-      >
+          alignItems: 'center',
+        }}>
         {faqAccordion({
           SECTIONS,
         })}

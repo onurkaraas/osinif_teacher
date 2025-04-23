@@ -1,23 +1,23 @@
-import { defApiFunc } from "../index";
+import { defApiFunc } from '../index';
 
 const updateProfile = async (id, newData) => {
   let currentUserData = {};
-  const currentUser = await defApiFunc("getAccountProfile", {
+  const currentUser = await defApiFunc('getAccountProfile', {
     userid: id,
   }).then(
-    (res) => {
-      console.log("USERID", res.data);
+    res => {
+      console.log('USERID', res.data);
       currentUserData = res.data[0];
     },
-    (err) => {
-      console.log("err", err);
+    err => {
+      console.log('err', err);
     },
   );
 
-  const reverse = (str) => {
-    return str.split("-").reverse().join("-").replaceAll("-", ".");
+  const reverse = str => {
+    return str.split('-').reverse().join('-').replaceAll('-', '.');
   };
-  return await defApiFunc("setMemberUpdate", {
+  return await defApiFunc('setMemberUpdate', {
     userid: id,
     firstnameInput: newData?.firstnameInput ?? currentUserData.NAME,
     lastnameInput: newData?.lastnameInput ?? currentUserData.LASTNAME,
@@ -27,9 +27,9 @@ const updateProfile = async (id, newData) => {
     cboOkul: currentUserData.SCHOOL,
     cboSinif: currentUserData.SINIF,
     cboSube: currentUserData.SUBE,
-    videoInput: !isNaN(newData?.videoInput)
-      ? newData?.videoInput
-      : currentUserData.TARGET_VIDEO,
+    cboSezon: currentUserData.SEASON,
+
+    videoInput: !isNaN(newData?.videoInput) ? newData?.videoInput : currentUserData.TARGET_VIDEO,
     questionInput: !isNaN(newData?.questionInput)
       ? newData?.questionInput
       : currentUserData.TARGET_QUESTION,
